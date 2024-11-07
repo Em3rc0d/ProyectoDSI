@@ -1,0 +1,23 @@
+<div class="p-6 bg-white rounded shadow">
+    <h2 class="text-lg font-semibold mb-4">Informe de Inventario Bajo</h2>
+  
+    <!-- Lista de productos con inventario bajo -->
+    <ul *ngIf="lowStockProducts.length" class="mt-4">
+      <li *ngFor="let product of lowStockProducts" class="border-b p-2 flex justify-between items-center">
+        <div>
+          <strong>Producto:</strong> {{ product.name }} ({{ product.code }})<br />
+          <strong>Cantidad actual:</strong> {{ product.quantity }}<br />
+          <strong>Umbral mínimo:</strong> {{ product.minThreshold }}<br />
+          <strong>Fecha de alerta:</strong> {{ product.alertDate | date:'short' }}
+        </div>
+      </li>
+    </ul>
+  
+    <!-- Mensaje en caso de no haber productos en bajo stock -->
+    <p *ngIf="message" class="text-red-500 mt-4">{{ message }}</p>
+  
+    <!-- Botones para descargar el informe -->
+    <button (click)="downloadReport('pdf')" class="bg-blue-500 text-white p-2 rounded mt-4 mr-2">Descargar PDF</button>
+    <button (click)="downloadReport('excel')" class="bg-green-500 text-white p-2 rounded mt-4">Descargar Excel</button>
+  </div>
+  

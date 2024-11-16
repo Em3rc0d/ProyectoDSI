@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { InvoiceService } from '../../services/invoice.service';
+import { InvoiceService } from '../../../services/invoice.service';
 
 interface Invoice {
   id: number;

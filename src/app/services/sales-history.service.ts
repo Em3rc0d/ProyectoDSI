@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class SalesHistoryService {
-  private apiUrl = 'https://api.miapp.com/sales/history';
+  private apiUrl = 'http://localhost:3000/sales-history';
 
   constructor(private http: HttpClient) {}
 

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { InventoryService } from '../../services/inventory.service';
+import { InventoryService } from '../../../services/inventory.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationService } from '../../../services/notification.service';
 
 interface Product {
   id: number;

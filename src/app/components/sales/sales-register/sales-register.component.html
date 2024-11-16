@@ -1,0 +1,87 @@
+<div class="min-h-screen p-6 bg-gray-100 flex flex-col items-center">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">Registrar Venta</h1>
+
+  <form
+    (ngSubmit)="registrarVenta()"
+    class="w-full max-w-lg bg-white p-6 rounded shadow space-y-4"
+  >
+    <!-- Campo Fecha y Hora -->
+    <div class="flex flex-col">
+      <label for="fecha" class="mb-1 text-sm font-medium text-gray-700"
+        >Fecha y Hora</label
+      >
+      <input
+        id="fecha"
+        type="datetime-local"
+        [(ngModel)]="venta.fecha"
+        name="fecha"
+        required
+        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+      />
+    </div>
+
+    <!-- Campo Producto -->
+    <div class="flex flex-col">
+      <label for="producto" class="mb-1 text-sm font-medium text-gray-700"
+        >Producto</label
+      >
+      <select
+        id="producto"
+        [(ngModel)]="venta.productos[0].productoId"
+        name="producto"
+        required
+        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+      >
+        <option *ngFor="let producto of productos" [value]="producto._id">
+          {{ producto.nombre }} - {{ producto.precio_unitario | currency }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Campo Cantidad -->
+    <div class="flex flex-col">
+      <label for="cantidad" class="mb-1 text-sm font-medium text-gray-700"
+        >Cantidad</label
+      >
+      <input
+        id="cantidad"
+        type="number"
+        [(ngModel)]="venta.productos[0].cantidad"
+        name="cantidad"
+        required
+        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+      />
+    </div>
+
+    <!-- Campo Subtotal (Calculado automáticamente) -->
+    <div class="flex flex-col">
+      <label for="subtotal" class="mb-1 text-sm font-medium text-gray-700"
+        >Subtotal</label
+      >
+      <input
+        id="subtotal"
+        type="text"
+        [value]="calcularSubtotal()"
+        readonly
+        class="border border-gray-300 rounded px-4 py-2 text-sm bg-gray-100 focus:outline-none"
+      />
+    </div>
+
+    <!-- Botón Enviar -->
+    <div class="flex justify-end space-x-4">
+      <button
+        type="submit"
+        class="bg-blue-500 text-white font-bold py-2 px-6 rounded hover:bg-blue-600 transition duration-300"
+      >
+        Registrar Venta
+      </button>
+      <button
+        type="button"
+        class="bg-gray-400 text-white font-bold py-2 px-6 rounded hover:bg-gray-500 transition duration-300"
+        (click)="cancelar()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

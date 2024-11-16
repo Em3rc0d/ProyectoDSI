@@ -16,7 +16,7 @@ interface Product {
   providedIn: 'root'
 })
 export class InventoryService {
-  private apiUrl = 'https://api.miapp.com/inventory';
+  private apiUrl = 'http://localhost:3000/inventory';
   private alertThreshold = 60000; // 60 segundos para el monitoreo continuo (puede ajustarse según necesidad)
 
   constructor(private http: HttpClient) {}

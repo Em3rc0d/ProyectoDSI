@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
-import { ProductManagementComponent } from './components/product-management/product-management.component';
-import { InvoiceSearchComponent } from './components/invoice-search/invoice-search.component';
-import { LowInventoryReportComponent } from './components/low-inventory-report/low-inventory-report.component';
-import { SalesManagementComponent } from './components/sales-management/sales-management.component';
-import { SalesHistoryComponent } from './components/sales-history/sales-history.component';
+import { InvoiceSearchComponent } from './components/useless/invoice-search/invoice-search.component';
+import { LowInventoryReportComponent } from './components/useless/low-inventory-report/low-inventory-report.component';
+import { SalesManagementComponent } from './components/useless/sales-management/sales-management.component';
+// import { SalesHistoryComponent } from './components/sales-history/sales-history.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
+import { SalesComponent } from './components/sales/sales.component';
+import { SalesRegisterComponent } from './components/sales/sales-register/sales-register.component';
+import { SalesSearchComponent } from './components/sales/sales-search/sales-search.component';
 
 export const routes: Routes = [
     {
@@ -15,10 +17,6 @@ export const routes: Routes = [
     {
         path: 'welcome',
         component: WelcomeComponent
-    },
-    {
-        path: 'product-management',
-        component: ProductManagementComponent
     },
     {
         path: 'invoice-search',
@@ -33,7 +31,15 @@ export const routes: Routes = [
         component: SalesManagementComponent
     },
     {
-        path: 'sales-history',
-        component: SalesHistoryComponent
+        path: 'sales',
+        component: SalesComponent,
+    },
+    {
+        path: 'sales-register',
+        component: SalesRegisterComponent
+    },
+    {
+        path: 'sales-search',
+        component: SalesSearchComponent
     }
 ];

@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SalesHistoryService } from '../../services/sales-history.service';
-import { NotificationService } from '../../services/notification.service';
+import { SalesHistoryService } from '../../../services/sales-history.service';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-sales-history',

@@ -7,6 +7,10 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
 import { SalesComponent } from './components/sales/sales.component';
 import { SalesRegisterComponent } from './components/sales/sales-register/sales-register.component';
 import { SalesSearchComponent } from './components/sales/sales-search/sales-search.component';
+import { ProductsComponent } from './components/products/products.component';
+import { ProductRegisterComponent } from './components/products/products-register/products-register.component';
+import { ProductsSearchComponent } from './components/products/products-search/products-search.component';
+import { RegisterComponent } from './components/welcome/register/register.component';
 
 export const routes: Routes = [
     {
@@ -41,5 +45,25 @@ export const routes: Routes = [
     {
         path: 'sales-search',
         component: SalesSearchComponent
+    },
+    {
+        path: 'products',
+        component: ProductsComponent
+    },
+    {
+        path: 'products-register',
+        component: ProductRegisterComponent
+    },
+    {
+        path: 'products-search',
+        component: ProductsSearchComponent
+    },
+    {
+        path: 'login',
+        component: WelcomeComponent
+    },
+    {
+        path: 'register',
+        component: RegisterComponent
     }
 ];

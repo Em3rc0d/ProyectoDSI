@@ -1,8 +1,64 @@
 <div class="flex justify-center items-center min-h-screen bg-gray-50">
-    <div class="text-center bg-white p-8 rounded-lg shadow-lg max-w-lg">
-      <h1 class="text-4xl font-bold text-indigo-600 mb-4">Bienvenido a nuestro sistema</h1>
-      <p class="text-lg text-gray-700 mb-4">Aquí podrás gestionar todas las ventas, productos y mucho más.</p>
-      <a href="/sales-history" class="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-indigo-700">Comenzar</a>
+  <div class="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
+    <h1 class="text-2xl font-bold text-indigo-600 mb-6">Iniciar Sesión</h1>
+
+    <!-- Formulario de Login -->
+    <form (ngSubmit)="login()" #loginForm="ngForm" class="space-y-4">
+      
+      <!-- Correo Electrónico -->
+      <div>
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Correo Electrónico"
+        />
+        <div *ngIf="loginForm.submitted && !email" class="text-red-500 text-sm mt-1">Este campo es obligatorio</div>
+      </div>
+
+      <!-- Contraseña -->
+      <div>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Contraseña"
+        />
+        <div *ngIf="loginForm.submitted && !password" class="text-red-500 text-sm mt-1">Este campo es obligatorio</div>
+      </div>
+
+      <!-- Botón Login -->
+      <button
+        type="submit"
+        [disabled]="loginForm.invalid || isLoading"
+        class="w-full bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700 transition duration-300"
+      >
+        <span *ngIf="isLoading" class="animate-spin">🔄</span>
+        Iniciar Sesión
+      </button>
+    </form>
+
+    <!-- Mensaje de error -->
+    <p class="mt-4 text-gray-600">
+      ¿No tienes cuenta?
+      <a routerLink="/register" class="text-indigo-500 hover:underline">Regístrate</a>
+    </p>
+
+    <!-- Mensaje de éxito o error -->
+    <div *ngIf="message" class="mt-4">
+      <div
+        [ngClass]="{
+          'bg-green-100 text-green-800': messageType === 'success',
+          'bg-red-100 text-red-800': messageType === 'error'
+        }"
+        class="p-4 rounded-lg transition duration-500"
+      >
+        {{ message }}
+      </div>
     </div>
   </div>
-  
+</div>

@@ -1,0 +1,55 @@
+<div class="min-h-screen p-6 bg-gray-100 flex flex-col items-center">
+    <!-- Encabezado -->
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Buscar Productos</h1>
+  
+    <!-- Barra de Búsqueda -->
+    <div class="w-full max-w-lg mb-4">
+      <input
+        type="text"
+        [(ngModel)]="criterioBusqueda"
+        (input)="buscarProductos()"
+        placeholder="Buscar por nombre, categoría o proveedor"
+        class="w-full border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+      />
+    </div>
+  
+    <!-- Botón de Exportar -->
+    <div class="w-full max-w-4xl mb-4 flex justify-end">
+      <button
+        class="bg-green-500 text-white font-bold py-2 px-6 rounded hover:bg-green-600 transition duration-300"
+        (click)="exportarResultados()"
+      >
+        Exportar Resultados
+      </button>
+    </div>
+  
+    <!-- Tabla de Resultados -->
+    <div class="w-full max-w-4xl bg-white rounded shadow">
+      <table class="table-auto w-full">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="px-4 py-2 text-left text-sm text-gray-700">Nombre</th>
+            <th class="px-4 py-2 text-left text-sm text-gray-700">Precio</th>
+            <th class="px-4 py-2 text-left text-sm text-gray-700">Categoría</th>
+            <th class="px-4 py-2 text-left text-sm text-gray-700">Proveedor</th>
+            <th class="px-4 py-2 text-left text-sm text-gray-700">Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let producto of productosFiltrados" class="border-t">
+            <td class="px-4 py-2 text-sm text-gray-800">{{ producto.nombre }}</td>
+            <td class="px-4 py-2 text-sm text-gray-800">{{ producto.precio }}</td>
+            <td class="px-4 py-2 text-sm text-gray-800">{{ producto.categoria.nombre }}</td>
+            <td class="px-4 py-2 text-sm text-gray-800">{{ producto.proveedor.nombre }}</td>
+            <td class="px-4 py-2 text-sm text-gray-800">{{ producto.cantidad }}</td>
+          </tr>
+          <tr *ngIf="productosFiltrados.length === 0">
+            <td colspan="5" class="px-4 py-2 text-center text-gray-500">
+              No se encontraron productos.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

@@ -1,0 +1,11 @@
+/* register.component.css */
+input:focus {
+    outline: none;
+    border-color: #4c51bf;
+  }
+  
+  button:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+  }
+  

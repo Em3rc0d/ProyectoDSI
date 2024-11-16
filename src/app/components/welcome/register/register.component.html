@@ -1,0 +1,72 @@
+<div class="flex justify-center items-center min-h-screen bg-gray-50">
+    <div class="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
+      <h1 class="text-2xl font-bold text-indigo-600 mb-6">Registro de Usuario</h1>
+  
+      <!-- Formulario de Registro -->
+      <form (ngSubmit)="register()" #registerForm="ngForm" class="space-y-4">
+        
+        <!-- Nombre -->
+        <div>
+          <input
+            type="text"
+            [(ngModel)]="nombre"
+            name="nombre"
+            required
+            class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Nombre"
+          />
+          <div *ngIf="registerForm.submitted && !nombre" class="text-red-500 text-sm mt-1">Este campo es obligatorio</div>
+        </div>
+  
+        <!-- Correo Electrónico -->
+        <div>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Correo Electrónico"
+          />
+          <div *ngIf="registerForm.submitted && !email" class="text-red-500 text-sm mt-1">Este campo es obligatorio</div>
+        </div>
+  
+        <!-- Contraseña -->
+        <div>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Contraseña"
+          />
+          <div *ngIf="registerForm.submitted && !password" class="text-red-500 text-sm mt-1">Este campo es obligatorio</div>
+        </div>
+  
+        <!-- Botón de Registro -->
+        <button
+          type="submit"
+          [disabled]="registerForm.invalid || isLoading"
+          class="w-full bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700 transition duration-300"
+        >
+          <span *ngIf="isLoading" class="animate-spin">🔄</span>
+          Registrar
+        </button>
+      </form>
+  
+      <!-- Mensaje de éxito o error -->
+      <div *ngIf="message" class="mt-4">
+        <div
+          [ngClass]="{
+            'bg-green-100 text-green-800': messageType === 'success',
+            'bg-red-100 text-red-800': messageType === 'error'
+          }"
+          class="p-4 rounded-lg transition duration-500"
+        >
+          {{ message }}
+        </div>
+      </div>
+    </div>
+  </div>
+  

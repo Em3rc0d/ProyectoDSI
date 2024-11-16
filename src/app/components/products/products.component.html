@@ -1,0 +1,67 @@
+<div class="min-h-screen p-6 bg-gray-100">
+  <!-- Encabezado -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Gestión de Productos</h1>
+    <!-- Campanita -->
+    <button 
+      class="relative bg-white p-2 rounded-full shadow hover:bg-gray-100 transition duration-300"
+      (click)="mostrarProductosBajoStock()"
+    >
+      <svg class="w-6 h-6 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3c0 .374-.074.734-.216 1.062L4.5 17h5m5 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+      <span *ngIf="productosBajoStock.length > 0" class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
+        {{ productosBajoStock.length }}
+      </span>
+    </button>
+  </div>
+
+  <!-- Botones -->
+  <div class="flex justify-start space-x-4 mb-6">
+    <button routerLink="/products-register" class="bg-blue-500 text-white font-bold py-2 px-6 rounded hover:bg-blue-600 transition duration-300">
+      Registrar
+    </button>
+    <button routerLink="/products-search" class="bg-green-500 text-white font-bold py-2 px-6 rounded hover:bg-green-600 transition duration-300">
+      Buscar
+    </button>
+  </div>
+
+  <!-- Tabla de products -->
+  <div *ngIf="products.length > 0" class="bg-white p-4 rounded shadow overflow-x-auto">
+    <table class="w-full border-collapse border border-gray-300 text-sm text-gray-700">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-4 py-2 text-left font-medium">Nombre</th>
+          <th class="border px-4 py-2 text-left font-medium">Precio Unitario</th>
+          <th class="border px-4 py-2 text-left font-medium">Stock</th>
+          <th class="border px-4 py-2 text-left font-medium">Categoría</th>
+          <th class="border px-4 py-2 text-left font-medium">Proveedor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products" class="hover:bg-gray-50">
+          <td class="border px-4 py-2">{{ product.nombre }}</td>
+          <td class="border px-4 py-2">{{ product.precio_unitario }}</td>
+          <td [class.text-red-500]="product.cantidad_stock < stockUmbral" class="border px-4 py-2">
+            {{ product.cantidad_stock }}
+          </td>
+          <td class="border px-4 py-2">{{ product.categoria }}</td>
+          <td class="border px-4 py-2">{{ product.proveedor }}</td>
+          <td class="border px-4 py-2 space-x-2">
+            <button (click)="editProduct(product._id, product)" class="bg-yellow-500 text-white font-bold py-1 px-4 rounded hover:bg-yellow-600 transition duration-300">
+              Editar
+            </button>
+            <button (click)="deleteProduct(product._id)" class="bg-red-500 text-white font-bold py-1 px-4 rounded hover:bg-red-600 transition duration-300">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mensaje sin products -->
+  <div *ngIf="products.length === 0" class="bg-white p-6 text-center text-gray-600 rounded shadow">
+    No hay products registradas actualmente.
+  </div>
+</div>

@@ -14,20 +14,34 @@ import { FormsModule } from '@angular/forms';
 export class SalesSearchComponent implements OnInit {
   ventas: any[] = [];
   filtros = {
+    tipoFiltro: '',   // Tipo de filtro seleccionado
     fechaDesde: '',
     fechaHasta: '',
     estado: '',
   };
 
-  estados = ['abierta', 'cerrada']; // Los estados de las ventas
+  estados = ['completada', 'pendiente']; // Los estados de las ventas
+  tiposFiltro = ['Fecha', 'Estado'];    // Tipos de filtros disponibles
 
   constructor(private saleService: SaleService) {}
 
   ngOnInit(): void {}
 
+  // Esta función se llama cuando el tipo de filtro cambia
+  onTipoFiltroChange(): void {
+    if (this.filtros.tipoFiltro === 'Fecha') {
+      this.filtros.estado = '';  // Limpiar estado cuando se selecciona filtro por fecha
+    } else if (this.filtros.tipoFiltro === 'Estado') {
+      this.filtros.fechaDesde = '';
+      this.filtros.fechaHasta = '';  // Limpiar fechas cuando se selecciona filtro por estado
+    }
+  }
+
+  // Función para aplicar los filtros
   buscarVentas(): void {
-    if (!this.filtros.fechaDesde && !this.filtros.fechaHasta && !this.filtros.estado) {
-      // Si no se han ingresado filtros, muestra todas las ventas
+    // Verificar si se selecciona un filtro
+    if (this.filtros.tipoFiltro === '') {
+      // Si no hay filtro seleccionado, mostrar todas las ventas
       this.saleService.obtenerVentas().subscribe({
         next: (data) => {
           this.ventas = data;
@@ -37,7 +51,7 @@ export class SalesSearchComponent implements OnInit {
         },
       });
     } else {
-      // Si se han ingresado filtros, realiza la búsqueda con los filtros aplicados
+      // Si hay un filtro seleccionado, aplicar el filtro correspondiente
       this.saleService.buscarVentasFiltradas(this.filtros).subscribe({
         next: (data) => {
           this.ventas = data;

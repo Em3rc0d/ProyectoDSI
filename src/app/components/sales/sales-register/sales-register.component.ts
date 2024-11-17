@@ -1,10 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { SaleService } from '../../../services/sale.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../services/product.service';
+
+interface Producto {
+  productoId: string;
+  nombre: string;
+  precio_unitario: number;
+  cantidad: number;
+  subtotal: number;
+}
 
 @Component({
   selector: 'app-sales-register',
@@ -14,25 +22,23 @@ import { ProductService } from '../../../services/product.service';
   styleUrl: './sales-register.component.css',
 })
 export class SalesRegisterComponent implements OnInit {
-  productos: any[] = [];
+  productos: any[] = []; // Lista de productos disponibles
   venta = {
     cliente: '',
     fecha: '',
-    total: 0,
-    productos: [
-      {
-        productoId: '',
-        cantidad: 0,
-        precio_unitario: 0,
-        subtotal: 0,
-      },
-    ],
+    estado: 'completada',
+    total: 0, // Total calculado automáticamente
+    productos: [] as Producto[], // Ahora el array es de tipo Producto
   };
+
+  productoSeleccionadoId: string = ''; // Declaramos la propiedad para el ID del producto seleccionado
+  cantidadSeleccionada: number = 1; // Declaramos la propiedad para la cantidad seleccionada
 
   constructor(
     private saleService: SaleService,
     private router: Router,
-    private productService: ProductService
+    private productService: ProductService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -40,21 +46,20 @@ export class SalesRegisterComponent implements OnInit {
     this.establecerFechaPorDefecto();
   }
 
+  // Establecer la fecha y hora por defecto en el formato correcto
   establecerFechaPorDefecto(): void {
     const fechaActual = new Date();
     const offsetPeru = -5; // UTC-5
-    const peruTimezone = new Date(fechaActual.getTime() + offsetPeru * 60 * 60 * 1000);
-    
-    // Formatear la fecha y hora en el formato necesario
+    const peruTimezone = new Date(
+      fechaActual.getTime() + offsetPeru * 60 * 60 * 1000
+    );
     const fechaConHora = peruTimezone.toISOString().split('T');
     const fecha = fechaConHora[0]; // 'yyyy-mm-dd'
     const hora = fechaConHora[1].substring(0, 5); // 'hh:mm'
-  
-    // Establecer tanto la fecha como la hora en el campo correspondiente
     this.venta.fecha = `${fecha}T${hora}`;
   }
-  
-  
+
+  // Cargar los productos desde el servicio
   cargarProductos(): void {
     this.productService.obtenerProductos().subscribe({
       next: (data) => {
@@ -66,6 +71,52 @@ export class SalesRegisterComponent implements OnInit {
     });
   }
 
+  // Añadir un producto al carrito
+  agregarProducto(productoId: string, cantidad: number): void {
+    // Buscar el producto en el carrito
+    const productoEnCarrito = this.venta.productos.find((p) => p.productoId === productoId);
+  
+    if (productoEnCarrito) {
+      // Si el producto ya está en el carrito, incrementar la cantidad y actualizar el subtotal
+      productoEnCarrito.cantidad += cantidad; // Aumentar la cantidad del producto existente
+      productoEnCarrito.subtotal = productoEnCarrito.precio_unitario * productoEnCarrito.cantidad; // Recalcular el subtotal
+    } else {
+      // Si el producto no está en el carrito, agregarlo
+      const producto = this.productos.find((p) => p._id === productoId);
+      if (producto) {
+        const item: Producto = {
+          productoId: producto._id,
+          nombre: producto.nombre,
+          precio_unitario: producto.precio_unitario,
+          cantidad,
+          subtotal: producto.precio_unitario * cantidad,
+        };
+        this.venta.productos.push(item); // Agregar el producto al carrito
+      }
+    }
+  
+    // Actualizar el total de la venta
+    this.actualizarTotal();
+    
+    // Restablecer la cantidad seleccionada a 1
+    this.cantidadSeleccionada = 1;
+  }
+  
+
+  // Calcular el total de la venta
+  actualizarTotal() {
+    this.venta.total = this.venta.productos.reduce((total, producto) => {
+      return total + producto.subtotal; // No habrá error aquí
+    }, 0);
+  }
+
+  // Eliminar un producto del carrito
+  eliminarProducto(index: number) {
+    this.venta.productos.splice(index, 1);
+    this.actualizarTotal();
+  }
+
+  // Registrar la venta
   registrarVenta() {
     this.saleService.crearVenta(this.venta).subscribe({
       next: (data) => {
@@ -75,6 +126,7 @@ export class SalesRegisterComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'Aceptar',
         });
+        this.router.navigate(['/home/sales']); // Redirige después de registrar
       },
       error: (error) => {
         Swal.fire({
@@ -87,32 +139,32 @@ export class SalesRegisterComponent implements OnInit {
     });
   }
 
-  calcularSubtotal(): number {
-    const productoSeleccionado = this.productos.find(
-      (producto) => producto._id === this.venta.productos[0].productoId
-    );
-    if (productoSeleccionado) {
-      const precio = productoSeleccionado.precio_unitario;
-      const cantidad = this.venta.productos[0].cantidad || 1;
-      return precio * cantidad;
-    }
-    return 0;
-  }
-
+  // Cancelar la venta y limpiar el carrito
   cancelar() {
     this.venta = {
       cliente: '',
       fecha: '',
+      estado: '',
       total: 0,
-      productos: [
-        {
-          productoId: '',
-          cantidad: 0,
-          precio_unitario: 0,
-          subtotal: 0,
-        },
-      ],
+      productos: [],
     };
-    this.router.navigate(['/sales']);
+    this.router.navigate(['/home/sales']);
+  }
+
+  // Método para generar la factura y navegar a la página de facturación
+  generarFactura(): void {
+    const productos = this.venta.productos;
+    const cliente = this.venta.cliente;
+    const fecha = this.venta.fecha;
+    const total = this.venta.total;
+
+    this.router.navigate(['/home/invoices'], {
+      queryParams: {
+        productos: JSON.stringify(productos),
+        cliente: cliente,
+        fecha: fecha,
+        total: total,
+      },
+    });
   }
 }

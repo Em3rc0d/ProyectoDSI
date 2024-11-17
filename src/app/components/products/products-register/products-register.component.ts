@@ -17,10 +17,10 @@ import { ProvidersService } from '../../../services/providers.service';
 export class ProductRegisterComponent implements OnInit {
   producto = {
     nombre: '',
-    precio: 0,
+    precio_unitario: 0,
+    cantidad_stock: 0,
     categoria: '',
-    proveedor: '',
-    cantidadInicial: 0,
+    proveedor: ''
   };
 
   categories: any[] = [];
@@ -38,7 +38,7 @@ export class ProductRegisterComponent implements OnInit {
   }
 
   registrarProducto(): void {
-    if (this.producto.nombre && this.producto.precio > 0 && this.producto.categoria) {
+    if (this.producto.nombre && this.producto.precio_unitario > 0 && this.producto.categoria) {
       this.productService.crearProducto(this.producto).subscribe({
         next: (data) => {
           Swal.fire({
@@ -47,7 +47,7 @@ export class ProductRegisterComponent implements OnInit {
             icon: 'success',
             confirmButtonText: 'Aceptar',
           });
-          this.router.navigate(['/products']); // Redirigir a la lista de productos
+          this.router.navigate(['/products']);
         },
         error: (error) => {
           Swal.fire({
@@ -71,10 +71,10 @@ export class ProductRegisterComponent implements OnInit {
   cancelar(): void {
     this.producto = {
       nombre: '',
-      precio: 0,
+      precio_unitario: 0,
       categoria: '',
       proveedor: '',
-      cantidadInicial: 0,
+      cantidad_stock: 0,
     };
     this.router.navigate(['/products']); // Redirigir al listado de productos
   }

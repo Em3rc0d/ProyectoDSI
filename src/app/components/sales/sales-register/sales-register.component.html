@@ -1,36 +1,67 @@
 <div class="min-h-screen p-6 bg-gray-100 flex flex-col items-center">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6">Registrar Venta</h1>
+  <h1 class="text-3xl font-semibold text-gray-800 mb-8">Registrar Venta</h1>
+  
+  <!-- Botón para generar la factura -->
+  <div class="flex justify-end space-x-4 mb-6">
+    <button
+      type="button"
+      class="bg-yellow-500 text-white font-semibold py-2 px-6 rounded hover:bg-yellow-600 transition duration-300 focus:outline-none"
+      (click)="generarFactura()"
+      aria-label="Generar factura"
+    >
+      Generar Factura
+    </button>
+  </div>
 
+  <!-- Formulario para registrar la venta -->
   <form
     (ngSubmit)="registrarVenta()"
-    class="w-full max-w-lg bg-white p-6 rounded shadow space-y-4"
+    class="w-full max-w-lg bg-white p-8 rounded-xl shadow-lg space-y-6"
+    aria-labelledby="formRegistrarVenta"
   >
-    <!-- Campo Fecha y Hora -->
+    <div id="formRegistrarVenta" class="text-center text-lg font-semibold text-gray-700">
+      <h2 class="mb-4">Detalles de la Venta</h2>
+    </div>
+    
+    <!-- Nombre del Cliente -->
     <div class="flex flex-col">
-      <label for="fecha" class="mb-1 text-sm font-medium text-gray-700"
-        >Fecha y Hora</label
-      >
+      <label for="cliente" class="mb-2 text-sm font-medium text-gray-700">Nombre del Cliente</label>
+      <input
+        id="cliente"
+        type="text"
+        [(ngModel)]="venta.cliente"
+        name="cliente"
+        required
+        class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Escribe el nombre del cliente"
+        aria-required="true"
+      />
+    </div>
+
+    <!-- Fecha y Hora de la Venta -->
+    <div class="flex flex-col">
+      <label for="fecha" class="mb-2 text-sm font-medium text-gray-700">Fecha y Hora</label>
       <input
         id="fecha"
         type="datetime-local"
         [(ngModel)]="venta.fecha"
         name="fecha"
         required
-        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+        class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-required="true"
       />
     </div>
 
-    <!-- Campo Producto -->
+    <!-- Selección de Producto -->
     <div class="flex flex-col">
-      <label for="producto" class="mb-1 text-sm font-medium text-gray-700"
-        >Producto</label
-      >
+      <label for="producto" class="mb-2 text-sm font-medium text-gray-700">Producto</label>
       <select
         id="producto"
-        [(ngModel)]="venta.productos[0].productoId"
+        [(ngModel)]="productoSeleccionadoId"
         name="producto"
         required
-        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+        class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-required="true"
       >
         <option *ngFor="let producto of productos" [value]="producto._id">
           {{ producto.nombre }} - {{ producto.precio_unitario | currency }}
@@ -38,47 +69,94 @@
       </select>
     </div>
 
-    <!-- Campo Cantidad -->
+    <!-- Cantidad de Producto -->
     <div class="flex flex-col">
-      <label for="cantidad" class="mb-1 text-sm font-medium text-gray-700"
-        >Cantidad</label
-      >
+      <label for="cantidad" class="mb-2 text-sm font-medium text-gray-700">Cantidad</label>
       <input
         id="cantidad"
         type="number"
-        [(ngModel)]="venta.productos[0].cantidad"
+        [(ngModel)]="cantidadSeleccionada"
         name="cantidad"
         required
-        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+        min="1"
+        class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-required="true"
+        placeholder="Cantidad"
       />
     </div>
 
-    <!-- Campo Subtotal (Calculado automáticamente) -->
-    <div class="flex flex-col">
-      <label for="subtotal" class="mb-1 text-sm font-medium text-gray-700"
-        >Subtotal</label
+    <!-- Botón para Añadir al Carrito -->
+    <div class="flex justify-end">
+      <button
+        type="button"
+        class="bg-blue-500 text-white font-semibold py-2 px-6 rounded hover:bg-blue-600 transition duration-300 focus:outline-none"
+        (click)="agregarProducto(productoSeleccionadoId, cantidadSeleccionada)"
+        aria-label="Añadir producto al carrito"
       >
+        Añadir al carrito
+      </button>
+    </div>
+
+    <!-- Tabla de productos seleccionados -->
+    <div class="overflow-x-auto mt-6">
+      <table class="table-auto w-full text-sm">
+        <thead>
+          <tr>
+            <th class="px-4 py-2 text-left text-gray-700">Producto</th>
+            <th class="px-4 py-2 text-left text-gray-700">Cantidad</th>
+            <th class="px-4 py-2 text-left text-gray-700">Precio Unitario</th>
+            <th class="px-4 py-2 text-left text-gray-700">Subtotal</th>
+            <th class="px-4 py-2 text-left text-gray-700">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of venta.productos; let i = index">
+            <td class="px-4 py-2">{{ item.nombre }}</td>
+            <td class="px-4 py-2">{{ item.cantidad }}</td>
+            <td class="px-4 py-2">{{ item.precio_unitario | currency }}</td>
+            <td class="px-4 py-2">{{ item.subtotal | currency }}</td>
+            <td class="px-4 py-2">
+              <button
+                type="button"
+                class="bg-red-500 text-white font-semibold py-1 px-4 rounded hover:bg-red-600 transition duration-300 focus:outline-none"
+                (click)="eliminarProducto(i)"
+                aria-label="Eliminar producto del carrito"
+              >
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Total de la Venta -->
+    <div class="flex flex-col mt-4">
+      <label for="total" class="mb-2 text-sm font-medium text-gray-700">Total</label>
       <input
-        id="subtotal"
+        id="total"
         type="text"
-        [value]="calcularSubtotal()"
+        [value]="venta.total"
         readonly
-        class="border border-gray-300 rounded px-4 py-2 text-sm bg-gray-100 focus:outline-none"
+        class="border border-gray-300 rounded px-4 py-3 text-sm bg-gray-100 focus:outline-none"
+        aria-readonly="true"
       />
     </div>
 
-    <!-- Botón Enviar -->
-    <div class="flex justify-end space-x-4">
+    <!-- Botones de Acción -->
+    <div class="flex justify-end space-x-4 mt-6">
       <button
         type="submit"
-        class="bg-blue-500 text-white font-bold py-2 px-6 rounded hover:bg-blue-600 transition duration-300"
+        class="bg-green-500 text-white font-semibold py-2 px-6 rounded hover:bg-green-600 transition duration-300 focus:outline-none"
+        aria-label="Registrar venta"
       >
         Registrar Venta
       </button>
       <button
         type="button"
-        class="bg-gray-400 text-white font-bold py-2 px-6 rounded hover:bg-gray-500 transition duration-300"
+        class="bg-gray-400 text-white font-semibold py-2 px-6 rounded hover:bg-gray-500 transition duration-300 focus:outline-none"
         (click)="cancelar()"
+        aria-label="Cancelar"
       >
         Cancelar
       </button>

@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-gray-50 p-6">
+    <div class="max-w-7xl mx-auto">
+      <!-- Encabezado del Dashboard -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h1 class="text-3xl font-semibold text-gray-800">Panel de Control</h1>
+        <p class="text-gray-600 mt-2">Resumen de tu sistema de inventarios</p>
+      </div>
+  
+      <!-- Gráficos y Estadísticas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-blue-600 hover:bg-blue-700 text-white p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          <h2 class="text-xl font-semibold">Productos Totales</h2>
+          <p class="text-4xl font-bold mt-2">{{contadorProductos}}</p>
+        </div>
+        <div class="bg-green-600 hover:bg-green-700 text-white p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          <h2 class="text-xl font-semibold">Categorías</h2>
+          <p class="text-4xl font-bold mt-2">{{contadorCategorias}}</p>
+        </div>
+        <div class="bg-yellow-600 hover:bg-yellow-700 text-white p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          <h2 class="text-xl font-semibold">Stock Bajo</h2>
+          <p class="text-4xl font-bold mt-2">{{contadorBajoStock}}</p>
+        </div>
+        <div class="bg-red-600 hover:bg-red-700 text-white p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+          <h2 class="text-xl font-semibold">Ventas Hoy</h2>
+          <p class="text-4xl font-bold mt-2">{{contadorVentas}}</p>
+        </div>
+      </div>
+  
+      <!-- Gráfico de Barras (Placeholder) -->
+      <div class="bg-white p-6 mt-6 rounded-lg shadow-lg">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Productos Vendidos por Mes</h2>
+        <div class="h-64 bg-gradient-to-r from-indigo-100 via-indigo-200 to-indigo-300 flex items-center justify-center rounded-lg shadow-md">
+          <canvas baseChart
+            [data]="barChartData"
+            [options]="barChartOptions"
+            [labels]="barChartLabels"
+            [type]="barChartType">
+          </canvas>
+        </div>
+      </div>
+      
+  
+      <!-- Tabla de Productos Recientes -->
+      <div class="bg-white p-6 mt-6 rounded-lg shadow-lg">
+        <h2 class="text-lg font-semibold mb-4 text-gray-800">Últimos Productos Añadidos</h2>
+        <table class="w-full border-collapse border border-gray-300 text-sm text-left">
+          <thead>
+            <tr class="bg-gray-100 text-gray-700">
+              <th class="border border-gray-300 px-4 py-2">ID</th>
+              <th class="border border-gray-300 px-4 py-2">Producto</th>
+              <th class="border border-gray-300 px-4 py-2">Categoría</th>
+              <th class="border border-gray-300 px-4 py-2">Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-gray-50">
+              <td class="border border-gray-300 px-4 py-2">1</td>
+              <td class="border border-gray-300 px-4 py-2">Laptop Dell</td>
+              <td class="border border-gray-300 px-4 py-2">Electrónica</td>
+              <td class="border border-gray-300 px-4 py-2">50</td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="border border-gray-300 px-4 py-2">2</td>
+              <td class="border border-gray-300 px-4 py-2">Audífonos Sony</td>
+              <td class="border border-gray-300 px-4 py-2">Accesorios</td>
+              <td class="border border-gray-300 px-4 py-2">150</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

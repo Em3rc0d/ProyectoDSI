@@ -1,0 +1,138 @@
+<div class="min-h-screen p-6 bg-gray-100 flex flex-col items-center">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-8">Registrar Factura</h1>
+  
+    <form (ngSubmit)="registrarFactura()" class="w-full max-w-lg bg-white p-8 rounded-xl shadow-lg space-y-6">
+      <div id="formRegistrarFactura" class="text-center text-lg font-semibold text-gray-700">
+        <h2 class="mb-4">Detalles de la Factura</h2>
+      </div>
+  
+      <!-- Nombre del Cliente -->
+      <div class="flex flex-col">
+        <label for="cliente" class="mb-2 text-sm font-medium text-gray-700">Nombre del Cliente</label>
+        <input
+          id="cliente"
+          type="text"
+          [(ngModel)]="factura.cliente"
+          name="cliente"
+          required
+          class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Nombre del cliente"
+          aria-required="true"
+        />
+      </div>
+  
+      <!-- Dirección -->
+      <div class="flex flex-col">
+        <label for="direccion" class="mb-2 text-sm font-medium text-gray-700">Dirección</label>
+        <input
+          id="direccion"
+          type="text"
+          [(ngModel)]="factura.direccion"
+          name="direccion"
+          required
+          class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Dirección del cliente"
+          aria-required="true"
+        />
+      </div>
+  
+      <!-- RUC -->
+      <div class="flex flex-col">
+        <label for="ruc" class="mb-2 text-sm font-medium text-gray-700">RUC</label>
+        <input
+          id="ruc"
+          type="text"
+          [(ngModel)]="factura.ruc"
+          name="ruc"
+          required
+          class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="RUC del cliente"
+          aria-required="true"
+        />
+      </div>
+  
+      <!-- Teléfono -->
+      <div class="flex flex-col">
+        <label for="telefono" class="mb-2 text-sm font-medium text-gray-700">Teléfono</label>
+        <input
+          id="telefono"
+          type="text"
+          [(ngModel)]="factura.telefono"
+          name="telefono"
+          required
+          class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Teléfono del cliente"
+          aria-required="true"
+        />
+      </div>
+  
+      <!-- Fecha y Hora de la Venta -->
+      <div class="flex flex-col">
+        <label for="fecha" class="mb-2 text-sm font-medium text-gray-700">Fecha y Hora</label>
+        <input
+          id="fecha"
+          type="datetime-local"
+          [(ngModel)]="factura.fecha"
+          name="fecha"
+          required
+          class="border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-required="true"
+        />
+      </div>
+  
+      <!-- Productos -->
+      <div class="overflow-x-auto mt-6">
+        <table class="table-auto w-full text-sm">
+          <thead>
+            <tr>
+              <th class="px-4 py-2 text-left text-gray-700">Producto</th>
+              <th class="px-4 py-2 text-left text-gray-700">Cantidad</th>
+              <th class="px-4 py-2 text-left text-gray-700">Precio Unitario</th>
+              <th class="px-4 py-2 text-left text-gray-700">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of factura.productos">
+              <td class="px-4 py-2">{{ item.nombre }}</td>
+              <td class="px-4 py-2">{{ item.cantidad }}</td>
+              <td class="px-4 py-2">{{ item.precio_unitario | currency }}</td>
+              <td class="px-4 py-2">{{ item.subtotal | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Total -->
+      <div class="flex flex-col mt-4">
+        <label for="total" class="mb-2 text-sm font-medium text-gray-700">Total</label>
+        <input
+          id="total"
+          type="text"
+          [value]="factura.total"
+          readonly
+          class="border border-gray-300 rounded px-4 py-3 text-sm bg-gray-100 focus:outline-none"
+          aria-readonly="true"
+        />
+      </div>
+  
+      <!-- Botones de Acción -->
+      <div class="flex justify-end space-x-4 mt-6">
+        <button
+          type="submit"
+          class="bg-green-500 text-white font-semibold py-2 px-6 rounded hover:bg-green-600 transition duration-300 focus:outline-none"
+          aria-label="Registrar factura"
+        >
+          Registrar Factura
+        </button>
+        <button
+          type="button"
+          class="bg-gray-400 text-white font-semibold py-2 px-6 rounded hover:bg-gray-500 transition duration-300 focus:outline-none"
+          (click)="cancelar()"
+          aria-label="Cancelar"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+  

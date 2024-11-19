@@ -36,8 +36,9 @@
           <td class="border px-4 py-2">{{ venta.fecha }}</td>
           <td class="border px-4 py-2">{{ venta.total | currency }}</td>
           <td class="border px-4 py-2 space-x-2">
+            <!-- Redirigir a la página de edición con los datos de la venta en la URL -->
             <button 
-              (click)="editarVenta(venta)"
+              [routerLink]="['/home/sales-edit', venta._id]"
               class="bg-yellow-500 text-white font-bold py-1 px-4 rounded hover:bg-yellow-600 transition duration-300">
               Editar
             </button>

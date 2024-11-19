@@ -1,15 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from './environment';
-
-interface Invoice {
-  id: number;
-  customer: string;
-  date: string;
-  amount: number;
-  pdfUrl: string;
-}
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,32 +13,73 @@ export class InvoiceService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todas las facturas
-  getFacturas(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+  getFacturas(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Obtener una factura por ID
   getFacturaById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Crear una nueva factura
   createFactura(factura: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, factura);
+    return this.http.post<any>(this.apiUrl, factura).pipe(
+      catchError((error) => {
+        console.error('Error en la creación de factura:', error);
+        return throwError(error); // O devolver un Observable vacío
+      })
+    );
   }
 
-  // Actualizar una factura existente
   updateFactura(id: string, factura: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, factura);
+    return this.http.put<any>(`${this.apiUrl}/${id}`, factura).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  // Eliminar una factura
   deleteFactura(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  searchInvoices(filters: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/search`, filters);
+  searchInvoices(
+    fechaInicio?: string, 
+    fechaFin?: string, 
+    cliente?: string, 
+    montoMinimo?: number, 
+    montoMaximo?: number, 
+    estado?: string
+  ): Observable<any> {
+    let params = new HttpParams();
+
+    if (fechaInicio) {
+      params = params.set('fechaInicio', fechaInicio);
+    }
+    if (fechaFin) {
+      params = params.set('fechaFin', fechaFin);
+    }
+    if (cliente) {
+      params = params.set('cliente', cliente);
+    }
+    if (montoMinimo) {
+      params = params.set('montoMinimo', montoMinimo.toString());
+    }
+    if (montoMaximo) {
+      params = params.set('montoMaximo', montoMaximo.toString());
+    }
+    if (estado) {
+      params = params.set('estado', estado);
+    }
+
+    return this.http.get(this.apiUrl, { params });
+  }
+
+  private handleError(error: any) {
+    console.error('Error en el servicio de facturas', error);
+    return throwError(() => new Error(error.message || 'Error en el servicio'));
   }
 }

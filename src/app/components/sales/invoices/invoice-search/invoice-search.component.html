@@ -1,40 +1,121 @@
-<div class="p-6 bg-white rounded shadow">
-  <h2 class="text-lg font-semibold mb-4">Consulta de Facturas</h2>
+<div class="filters-container p-6 bg-white rounded-lg shadow-md">
+  <h3 class="text-lg font-semibold mb-6">Filtros de Búsqueda</h3>
 
-  <!-- Formulario de filtros -->
-  <div class="mb-4">
-    <label class="block">Fecha de emisión:</label>
-    <input [(ngModel)]="filters.date" type="date" class="p-2 border rounded w-full" />
+  <!-- Formulario de Filtros -->
+  <form (ngSubmit)="searchInvoices()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Selección de Filtro -->
+      <div>
+        <label for="filter" class="block text-sm font-medium text-gray-700">Seleccionar Filtro</label>
+        <select
+          id="filter"
+          [(ngModel)]="selectedFilter"
+          (change)="onFilterChange()"
+          name="filter"
+          class="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Seleccione un filtro</option>
+          <option value="dateRange">Rango de Fechas</option> <!-- Cambiado a Rango de Fechas -->
+          <option value="customer">Cliente</option>
+          <option value="minAmount">Monto Mínimo</option>
+          <option value="maxAmount">Monto Máximo</option>
+          <option value="state">Estado</option>
+        </select>
+      </div>
 
-    <label class="block mt-2">Cliente:</label>
-    <input [(ngModel)]="filters.customer" type="text" placeholder="Nombre o código del cliente" class="p-2 border rounded w-full" />
+      <!-- Filtros Condicionales -->
+      <div *ngIf="selectedFilter === 'dateRange'">
+        <!-- Fecha de Inicio -->
+        <label for="dateStart" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
+        <input type="date" id="dateStart" [(ngModel)]="filters.dateStart" name="dateStart"
+               class="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-    <label class="block mt-2">Monto mínimo:</label>
-    <input [(ngModel)]="filters.minAmount" type="number" class="p-2 border rounded w-full" />
+        <!-- Fecha de Fin -->
+        <label for="dateEnd" class="block text-sm font-medium text-gray-700">Fecha de Fin</label>
+        <input type="date" id="dateEnd" [(ngModel)]="filters.dateEnd" name="dateEnd"
+               class="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
 
-    <label class="block mt-2">Monto máximo:</label>
-    <input [(ngModel)]="filters.maxAmount" type="number" class="p-2 border rounded w-full" />
+      <div *ngIf="selectedFilter === 'customer'">
+        <label for="customer" class="block text-sm font-medium text-gray-700">Cliente</label>
+        <input type="text" id="customer" [(ngModel)]="filters.customer" name="customer"
+               class="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div *ngIf="selectedFilter === 'minAmount'">
+        <label for="minAmount" class="block text-sm font-medium text-gray-700">Monto Mínimo</label>
+        <input type="number" id="minAmount" [(ngModel)]="filters.minAmount" name="minAmount"
+               class="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div *ngIf="selectedFilter === 'maxAmount'">
+        <label for="maxAmount" class="block text-sm font-medium text-gray-700">Monto Máximo</label>
+        <input type="number" id="maxAmount" [(ngModel)]="filters.maxAmount" name="maxAmount"
+               class="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div *ngIf="selectedFilter === 'state'">
+        <label for="state" class="block text-sm font-medium text-gray-700">Estado</label>
+        <select
+          id="state"
+          [(ngModel)]="filters.state"
+          name="state"
+          class="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Seleccionar Estado</option>
+          <option value="paid">Pagado</option>
+          <option value="pending">Pendiente</option>
+          <option value="issued">Emitida</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <div class="mt-6 flex justify-between items-center">
+      <button
+        type="submit"
+        class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Buscar
+      </button>
+      <button
+        type="button"
+        (click)="clearFilters()"
+        class="px-6 py-3 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+      >
+        Limpiar
+      </button>
+    </div>
+  </form>
+
+  <!-- Mensaje de carga o error -->
+  <div *ngIf="message" class="mt-4 text-center text-sm text-red-500">
+    {{ message }}
   </div>
 
-  <!-- Botones de acción -->
-  <button (click)="searchInvoices()" class="bg-blue-500 text-white p-2 rounded">Buscar</button>
-  <button (click)="clearFilters()" class="bg-gray-500 text-white p-2 rounded ml-2">Limpiar Filtros</button>
-
-  <!-- Mensaje de error -->
-  <p *ngIf="message" class="text-red-500 mt-4">{{ message }}</p>
-
-  <!-- Lista de facturas -->
-  <ul *ngIf="invoices.length" class="mt-4">
-    <li *ngFor="let invoice of invoices" class="border-b p-2 flex justify-between items-center">
-      <div>
-        <strong>Fecha:</strong> {{ invoice.date }}<br />
-        <strong>Cliente:</strong> {{ invoice.customer }}<br />
-        <strong>Monto:</strong> {{ invoice.amount | currency }}
+  <!-- Mostrar los resultados filtrados -->
+  <div *ngIf="invoices.length > 0" class="mt-6">
+    <h3 class="text-lg font-semibold mb-4">Resultados de Búsqueda</h3>
+    <p class="mb-4 text-sm text-gray-600">Se encontraron {{ invoices.length }} facturas con los filtros aplicados.</p>
+    <div *ngFor="let invoice of invoices" class="border p-4 mb-4 rounded-lg shadow-md">
+      <div class="flex justify-between items-center">
+        <span class="text-sm font-medium">Factura #{{ invoice.numero }}</span>
+        <span class="text-sm text-gray-500">{{ invoice.estado }}</span>
       </div>
-      <div>
-        <button (click)="viewInvoice(invoice)" class="text-blue-500 mr-2">Ver Detalles</button>
-        <button (click)="downloadInvoice(invoice.pdfUrl)" class="text-green-500">Descargar PDF</button>
-      </div>
-    </li>
-  </ul>
+      <div class="text-sm">Cliente: {{ invoice.cliente }}</div>
+      <div class="text-sm">Fecha: {{ invoice.fecha | date }}</div>
+      <div class="text-sm">Total: S/ {{ invoice.total | number:'1.2-2' }}</div>
+      <button
+        (click)="viewInvoice(invoice._id)"
+        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Ver Factura
+      </button>
+    </div>
+  </div>
+
+  <!-- Si no hay resultados -->
+  <div *ngIf="invoices.length === 0 && message === ''" class="mt-4 text-center text-sm text-gray-500">
+    No se encontraron facturas con los filtros aplicados.
+  </div>
 </div>

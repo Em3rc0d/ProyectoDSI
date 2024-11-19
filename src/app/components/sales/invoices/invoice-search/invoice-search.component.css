@@ -1,0 +1,50 @@
+/* Estilos para el modal */
+.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+  }
+  
+  .bg-opacity-50 {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .bg-white {
+    background-color: white;
+  }
+  
+  .rounded {
+    border-radius: 8px;
+  }
+  
+  .p-4 {
+    padding: 16px;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  
+  .text-blue-500 {
+    color: #3b82f6;
+  }
+  
+  .text-green-500 {
+    color: #10b981;
+  }
+  
+  .flex {
+    display: flex;
+  }
+  
+  .justify-center {
+    justify-content: center;
+  }
+  
+  .items-center {
+    align-items: center;
+  }
+  

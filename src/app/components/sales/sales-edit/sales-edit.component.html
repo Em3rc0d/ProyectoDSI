@@ -1,0 +1,147 @@
+<div *ngIf="venta" class="p-6 bg-gray-100">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">Editar Venta</h1>
+
+  <form (ngSubmit)="guardarVenta()">
+    <!-- Cliente -->
+    <div class="mb-4">
+      <label for="cliente" class="block text-gray-700">Cliente:</label>
+      <input
+        id="cliente"
+        [(ngModel)]="venta.cliente"
+        name="cliente"
+        type="text"
+        class="w-full p-2 border border-gray-300 rounded"
+      />
+    </div>
+
+    <!-- Fecha -->
+    <div class="mb-4">
+      <label for="fecha" class="block text-gray-700">Fecha:</label>
+      <input
+        id="fecha"
+        [(ngModel)]="nuevaFecha"
+        name="fecha"
+        type="date"
+        class="w-full p-2 border border-gray-300 rounded"
+        [value]="nuevaFecha || venta.fecha"
+      />
+    </div>
+
+    <!-- Productos actuales -->
+    <div class="mb-4">
+      <label for="productos" class="block text-gray-700"
+        >Productos actuales:</label
+      >
+      <ul class="list-disc pl-5">
+        <li *ngFor="let producto of venta.productos">
+          {{ getProductName(producto.productoId) }} -
+          {{ getProductPrice(producto.productoId) | currency }} (Cantidad:
+          {{ producto.cantidad }})
+          <input
+            type="number"
+            [(ngModel)]="producto.cantidad"
+            name="cantidad-{{ producto.productoId }}"
+            min="1"
+            class="ml-2 p-1 w-20 border border-gray-300 rounded"
+          />
+          <button
+            type="button"
+            (click)="eliminarProducto(producto)"
+            class="ml-2 bg-red-500 text-white font-bold py-1 px-2 rounded"
+          >
+            Eliminar
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Productos disponibles para agregar -->
+    <div class="mb-4">
+      <label for="productosDisponibles" class="block text-gray-700"
+        >Productos disponibles para agregar:</label
+      >
+      <div *ngFor="let producto of productosDisponibles">
+        <div class="flex items-center">
+          <input
+            type="checkbox"
+            [(ngModel)]="productoSeleccionado[producto._id]"
+            [name]="'producto-' + producto._id"
+            class="mr-2"
+            (change)="actualizarResumen()"
+          />
+          <label
+            >{{ producto.nombre }} -
+            {{ producto.precio_unitario | currency }}</label
+          >
+          <input
+            *ngIf="productoSeleccionado[producto._id]"
+            type="number"
+            [(ngModel)]="productoSeleccionado[producto._id]"
+            [name]="'cantidad-' + producto._id"
+            min="1"
+            placeholder="1"
+            class="ml-2 p-1 w-20 border border-gray-300 rounded"
+            (input)="actualizarResumen()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen de cambios -->
+    <div class="mb-4">
+      <h3 class="font-medium">Resumen de cambios:</h3>
+      <p>
+        <strong>Cliente:</strong> {{ venta.cliente }} ->
+        {{ venta.cliente || "Nuevo cliente" }}
+      </p>
+      <p>
+        <strong>Fecha:</strong> {{ venta.fecha }} ->
+        {{ nuevaFecha || "Nueva fecha" }}
+      </p>
+
+      <!-- Productos actuales -->
+      <div>
+        <strong>Productos actuales:</strong>
+        <ul class="list-disc pl-5">
+          <li *ngFor="let producto of venta.productos">
+            {{ getProductName(producto.productoId) }} -
+            {{ getProductPrice(producto.productoId) | currency }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Productos a agregar -->
+      <div>
+        <strong>Productos a agregar:</strong>
+        <ul class="list-disc pl-5">
+          <li *ngFor="let producto of selectedProducts">
+            {{ producto.nombre }} - {{ producto.precio | currency }} (Cantidad:
+            {{ producto.cantidad | currency }})
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Subtotal -->
+    <div class="mb-4">
+      <p><strong>Subtotal:</strong> {{ calcularTotal() | currency }}</p>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex space-x-4">
+      <button
+        type="submit"
+        class="bg-blue-500 text-white font-bold py-2 px-6 rounded hover:bg-blue-600"
+      >
+        Guardar Cambios
+      </button>
+      <button
+        type="button"
+        (click)="cancelarEdicion()"
+        class="bg-gray-500 text-white font-bold py-2 px-6 rounded hover:bg-gray-600"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

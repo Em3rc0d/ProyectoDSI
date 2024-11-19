@@ -14,6 +14,7 @@ import { RegisterComponent } from './components/welcome/register/register.compon
 import { HomeComponent } from './components/home/home.component';
 import { StartComponent } from './components/home/start/start.component';
 import { InvoicesComponent } from './components/sales/invoices/invoices.component';
+import { SalesEditComponent } from './components/sales/sales-edit/sales-edit.component';
 
 export const routes: Routes = [
   {
@@ -44,6 +45,10 @@ export const routes: Routes = [
       {
         path: 'sales',
         component: SalesComponent,
+      },
+      {
+        path: 'sales-edit/:id',
+        component: SalesEditComponent
       },
       {
         path: 'sales-register',

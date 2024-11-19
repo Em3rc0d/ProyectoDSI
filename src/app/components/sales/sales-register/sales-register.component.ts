@@ -74,12 +74,15 @@ export class SalesRegisterComponent implements OnInit {
   // Añadir un producto al carrito
   agregarProducto(productoId: string, cantidad: number): void {
     // Buscar el producto en el carrito
-    const productoEnCarrito = this.venta.productos.find((p) => p.productoId === productoId);
-  
+    const productoEnCarrito = this.venta.productos.find(
+      (p) => p.productoId === productoId
+    );
+
     if (productoEnCarrito) {
       // Si el producto ya está en el carrito, incrementar la cantidad y actualizar el subtotal
       productoEnCarrito.cantidad += cantidad; // Aumentar la cantidad del producto existente
-      productoEnCarrito.subtotal = productoEnCarrito.precio_unitario * productoEnCarrito.cantidad; // Recalcular el subtotal
+      productoEnCarrito.subtotal =
+        productoEnCarrito.precio_unitario * productoEnCarrito.cantidad; // Recalcular el subtotal
     } else {
       // Si el producto no está en el carrito, agregarlo
       const producto = this.productos.find((p) => p._id === productoId);
@@ -94,14 +97,13 @@ export class SalesRegisterComponent implements OnInit {
         this.venta.productos.push(item); // Agregar el producto al carrito
       }
     }
-  
+
     // Actualizar el total de la venta
     this.actualizarTotal();
-    
+
     // Restablecer la cantidad seleccionada a 1
     this.cantidadSeleccionada = 1;
   }
-  
 
   // Calcular el total de la venta
   actualizarTotal() {
@@ -117,16 +119,36 @@ export class SalesRegisterComponent implements OnInit {
   }
 
   // Registrar la venta
+  // Registrar la venta y mostrar la confirmación para generar la factura
   registrarVenta() {
     this.saleService.crearVenta(this.venta).subscribe({
       next: (data) => {
+        // Mostrar alerta de éxito
         Swal.fire({
           title: '¡Éxito!',
           text: 'Venta registrada exitosamente.',
           icon: 'success',
           confirmButtonText: 'Aceptar',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Preguntar si desea generar la factura
+            Swal.fire({
+              title: '¿Desea generar la factura?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonText: 'Sí',
+              cancelButtonText: 'No',
+            }).then((res) => {
+              if (res.isConfirmed) {
+                // Si elige Sí, navegar a la página de facturas con la información necesaria
+                this.generarFactura(data._id); // Pasa la ventaId y otra información
+              } else {
+                // Si elige No, redirigir a la página de ventas
+                this.router.navigate(['/home/sales']);
+              }
+            });
+          }
         });
-        this.router.navigate(['/home/sales']); // Redirige después de registrar
       },
       error: (error) => {
         Swal.fire({
@@ -152,7 +174,8 @@ export class SalesRegisterComponent implements OnInit {
   }
 
   // Método para generar la factura y navegar a la página de facturación
-  generarFactura(): void {
+  // Método para generar la factura y navegar a la página de facturación
+  generarFactura(ventaId: string): void {
     const productos = this.venta.productos;
     const cliente = this.venta.cliente;
     const fecha = this.venta.fecha;
@@ -160,6 +183,7 @@ export class SalesRegisterComponent implements OnInit {
 
     this.router.navigate(['/home/invoices'], {
       queryParams: {
+        ventaId: ventaId, // Añadido ventaId
         productos: JSON.stringify(productos),
         cliente: cliente,
         fecha: fecha,

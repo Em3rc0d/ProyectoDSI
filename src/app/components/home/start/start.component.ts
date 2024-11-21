@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { CategoriesService } from '../../../services/categories.service';
-import { SaleService } from '../../../services/sale.service'; // Importing SaleService
+import { SaleService } from '../../../services/sale.service'; // Importando SaleService
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -23,7 +23,8 @@ export class StartComponent implements OnInit {
   contadorCategorias: number = 0;
   contadorVentas: number = 0;
   ultimasVentasProductos: any[] = [];
-  ventas: any[] = []; // Array para almacenar las ventas
+  ventas: any[] = [];
+
   constructor(
     private router: Router,
     private productService: ProductService,
@@ -38,6 +39,7 @@ export class StartComponent implements OnInit {
     this.loadSales();
   }
 
+  
   setLoadingState(state: boolean): void {
     this.isLoading = state;
   }

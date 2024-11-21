@@ -1,144 +1,171 @@
-<div *ngIf="venta" class="p-6 bg-gray-100">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6">Editar Venta</h1>
+<div
+  *ngIf="venta"
+  class="p-6 bg-gray-100 rounded-lg shadow-lg max-w-3xl mx-auto"
+>
+  <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+    Editar Venta
+  </h1>
 
-  <form (ngSubmit)="guardarVenta()">
+  <form (ngSubmit)="guardarVenta()" class="space-y-6">
     <!-- Cliente -->
     <div class="mb-4">
-      <label for="cliente" class="block text-gray-700">Cliente:</label>
+      <label for="cliente" class="block text-gray-700 font-medium"
+        >Cliente:</label
+      >
       <input
         id="cliente"
         [(ngModel)]="venta.cliente"
         name="cliente"
         type="text"
-        class="w-full p-2 border border-gray-300 rounded"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Ingrese el nombre del cliente"
       />
     </div>
 
     <!-- Fecha -->
     <div class="mb-4">
-      <label for="fecha" class="block text-gray-700">Fecha:</label>
+      <label for="fecha" class="block text-gray-700 font-medium">Fecha:</label>
       <input
         id="fecha"
         [(ngModel)]="nuevaFecha"
         name="fecha"
         type="date"
-        class="w-full p-2 border border-gray-300 rounded"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         [value]="nuevaFecha || venta.fecha"
       />
     </div>
 
     <!-- Productos actuales -->
-    <div class="mb-4">
-      <label for="productos" class="block text-gray-700"
+    <div class="mb-6">
+      <label for="productos" class="block text-gray-700 font-medium"
         >Productos actuales:</label
       >
-      <ul class="list-disc pl-5">
-        <li *ngFor="let producto of venta.productos">
-          {{ getProductName(producto.productoId) }} -
-          {{ getProductPrice(producto.productoId) | currency }} (Cantidad:
-          {{ producto.cantidad }})
+      <div class="space-y-2">
+        <div
+          *ngFor="let producto of venta.productos"
+          class="flex flex-wrap items-center space-x-4"
+        >
+          <span class="w-3/5 sm:w-2/3"
+            >{{ getProductName(producto.productoId._id) }} -
+            {{ getProductPrice(producto.productoId._id) | currency }} (Cantidad:
+            {{ producto.cantidad }})</span
+          >
+
           <input
             type="number"
             [(ngModel)]="producto.cantidad"
             name="cantidad-{{ producto.productoId }}"
             min="1"
-            class="ml-2 p-1 w-20 border border-gray-300 rounded"
+            class="w-16 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+
           <button
             type="button"
             (click)="eliminarProducto(producto)"
-            class="ml-2 bg-red-500 text-white font-bold py-1 px-2 rounded"
+            class="ml-2 bg-red-500 text-white font-bold py-1 px-2 rounded-lg hover:bg-red-600"
           >
             Eliminar
           </button>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Productos disponibles para agregar -->
-    <div class="mb-4">
-      <label for="productosDisponibles" class="block text-gray-700"
-        >Productos disponibles para agregar:</label
-      >
-      <div *ngFor="let producto of productosDisponibles">
-        <div class="flex items-center">
-          <input
-            type="checkbox"
-            [(ngModel)]="productoSeleccionado[producto._id]"
-            [name]="'producto-' + producto._id"
-            class="mr-2"
-            (change)="actualizarResumen()"
-          />
-          <label
-            >{{ producto.nombre }} -
-            {{ producto.precio_unitario | currency }}</label
-          >
-          <input
-            *ngIf="productoSeleccionado[producto._id]"
-            type="number"
-            [(ngModel)]="productoSeleccionado[producto._id]"
-            [name]="'cantidad-' + producto._id"
-            min="1"
-            placeholder="1"
-            class="ml-2 p-1 w-20 border border-gray-300 rounded"
-            (input)="actualizarResumen()"
-          />
         </div>
       </div>
     </div>
 
-    <!-- Resumen de cambios -->
-    <div class="mb-4">
-      <h3 class="font-medium">Resumen de cambios:</h3>
-      <p>
-        <strong>Cliente:</strong> {{ venta.cliente }} ->
-        {{ venta.cliente || "Nuevo cliente" }}
-      </p>
-      <p>
-        <strong>Fecha:</strong> {{ venta.fecha }} ->
-        {{ nuevaFecha || "Nueva fecha" }}
-      </p>
+    <!-- Productos disponibles para agregar (Galería) -->
+    <div class="mb-6">
+      <label for="productosDisponibles" class="block text-gray-700 font-medium"
+        >Productos disponibles para agregar:</label
+      >
+      <div class="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-6 gap-4">
+        <div
+          *ngFor="let producto of productosDisponibles"
+          class="border border-gray-300 rounded-lg p-4 flex flex-col items-center"
+        >
+          <p class="text-center font-semibold">{{ producto.nombre }}</p>
+          <p class="text-center text-sm text-gray-600">
+            {{ producto.precio_unitario | currency }}
+          </p>
 
-      <!-- Productos actuales -->
-      <div>
-        <strong>Productos actuales:</strong>
-        <ul class="list-disc pl-5">
-          <li *ngFor="let producto of venta.productos">
-            {{ getProductName(producto.productoId) }} -
-            {{ getProductPrice(producto.productoId) | currency }}
-          </li>
-        </ul>
-      </div>
-
-      <!-- Productos a agregar -->
-      <div>
-        <strong>Productos a agregar:</strong>
-        <ul class="list-disc pl-5">
-          <li *ngFor="let producto of selectedProducts">
-            {{ producto.nombre }} - {{ producto.precio | currency }} (Cantidad:
-            {{ producto.cantidad | currency }})
-          </li>
-        </ul>
+          <div class="flex items-center mt-2">
+            <input
+              type="checkbox"
+              [(ngModel)]="productoSeleccionado[producto._id]"
+              [name]="'producto-' + producto._id"
+              class="mr-2"
+              (change)="actualizarResumen()"
+            />
+            <input
+              *ngIf="productoSeleccionado[producto._id]"
+              type="number"
+              [(ngModel)]="productoSeleccionado[producto._id]"
+              [name]="'cantidad-' + producto._id"
+              min="1"
+              placeholder="Cantidad"
+              class="w-16 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              (input)="actualizarResumen()"
+            />
+          </div>
+        </div>
       </div>
     </div>
+
+    <div>
+      <h3 class="text-xl font-medium">Resumen de cambios:</h3>
+      <div class="space-y-2">
+        <p>
+          <strong>Cliente:</strong> {{ venta.cliente }} ->
+          {{ venta.cliente || "Nuevo cliente" }}
+        </p>
+        <p>
+          <strong>Fecha:</strong> {{ venta.fecha }} ->
+          {{ nuevaFecha || "Nueva fecha" }}
+        </p>
+    
+        <div>
+          <strong>Productos actuales:</strong>
+          <ul class="list-disc pl-6">
+            <li *ngFor="let producto of venta.productos">
+              {{ getProductName(producto.productoId._id) }} -
+              {{ getProductPrice(producto.productoId._id) | currency }} (Cantidad:
+              {{ producto.cantidad }}) -
+              {{ calcularSubtotal(producto.productoId._id, producto.cantidad) | currency }}
+            </li>
+          </ul>
+        </div>
+    
+        <div>
+          <strong>Productos a agregar:</strong>
+          <ul class="list-disc pl-6">
+            <li *ngFor="let producto of productosSeleccionadosResumen">
+              {{ getProductName(producto.productoId) }} -
+              {{ producto.precio_unitario | currency }} (Cantidad:
+              {{ producto.cantidad }}) -
+              {{ producto.subtotal | currency }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
 
     <!-- Subtotal -->
     <div class="mb-4">
-      <p><strong>Subtotal:</strong> {{ calcularTotal() | currency }}</p>
+      <p class="font-medium text-lg">
+        <strong>Subtotal:</strong> {{ calcularTotal() | currency }}
+      </p>
     </div>
 
     <!-- Botones -->
-    <div class="flex space-x-4">
+    <div class="flex flex-col sm:flex-row justify-between mt-6 gap-4">
       <button
         type="submit"
-        class="bg-blue-500 text-white font-bold py-2 px-6 rounded hover:bg-blue-600"
+        class="bg-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 w-full sm:w-auto"
       >
         Guardar Cambios
       </button>
       <button
         type="button"
         (click)="cancelarEdicion()"
-        class="bg-gray-500 text-white font-bold py-2 px-6 rounded hover:bg-gray-600"
+        class="bg-gray-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-600 w-full sm:w-auto"
       >
         Cancelar
       </button>

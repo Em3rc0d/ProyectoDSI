@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from './environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
@@ -8,12 +8,20 @@ import { Observable } from 'rxjs';
 export class CategoriesService {
   private apiUrl = environment.apiUrl + 'api/categorias';
   constructor(private httpClient: HttpClient) {}
-
+  private headers = this.getHeaders();
+  private getHeaders(): HttpHeaders {
+    const token = sessionStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}` // Agregar el token en los encabezados
+    });
+  }
   obtenerCategorias(): Observable<any[]> {
-    return this.httpClient.get<any[]>(this.apiUrl);
+    
+    return this.httpClient.get<any[]>(this.apiUrl, { headers: this.headers });
   }
 
   crearCategoria(categoria: any): Observable<any> {
-    return this.httpClient.post<any>(this.apiUrl, categoria);
+
+    return this.httpClient.post<any>(this.apiUrl, categoria, {headers: this.headers});
   }
 }

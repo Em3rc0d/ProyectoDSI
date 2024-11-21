@@ -45,7 +45,7 @@
           class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
         >
           <option value="" disabled selected>Seleccionar Categoría</option>
-          <option *ngFor="let categoria of categories" [value]="categoria._id">
+          <option *ngFor="let categoria of categories" [value]="categoria.nombre">
             {{ categoria.nombre }}
           </option>
         </select>
@@ -62,7 +62,7 @@
           class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
         >
           <option value="" disabled selected>Seleccionar Proveedor</option>
-          <option *ngFor="let proveedor of providers" [value]="proveedor._id">
+          <option *ngFor="let proveedor of providers" [value]="proveedor.nombre">
             {{ proveedor.nombre }}
           </option>
         </select>

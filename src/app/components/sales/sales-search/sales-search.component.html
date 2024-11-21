@@ -1,5 +1,4 @@
 <div class="min-h-screen p-6 bg-gray-100">
-  <!-- Encabezado -->
   <h1 class="text-2xl font-bold text-gray-800 mb-6">Buscar Venta por Filtro</h1>
 
   <!-- Formulario de Filtros -->
@@ -7,24 +6,29 @@
     <div class="flex space-x-4 mb-4">
       <!-- Tipo de Filtro -->
       <div class="flex flex-col">
-        <label for="tipoFiltro" class="mb-1 text-sm font-medium text-gray-700">Tipo de Filtro</label>
+        <label for="tipoFiltro" class="mb-1 text-sm font-medium text-gray-700"
+          >Tipo de Filtro</label
+        >
         <select
           id="tipoFiltro"
           [(ngModel)]="filtros.tipoFiltro"
           name="tipoFiltro"
-          (change)="onTipoFiltroChange()"   
+          (change)="onTipoFiltroChange()"
           class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
         >
           <option value="">Seleccionar Tipo de Filtro</option>
-          <option *ngFor="let tipo of tiposFiltro" [value]="tipo">{{ tipo }}</option>
+          <option *ngFor="let tipo of tiposFiltro" [value]="tipo">
+            {{ tipo }}
+          </option>
         </select>
       </div>
     </div>
 
-    <!-- Filtro por Fechas (solo si se selecciona el tipo de filtro Fecha) -->
     <div *ngIf="filtros.tipoFiltro === 'Fecha'" class="flex space-x-4 mb-4">
       <div class="flex flex-col">
-        <label for="fechaDesde" class="mb-1 text-sm font-medium text-gray-700">Fecha Desde</label>
+        <label for="fechaDesde" class="mb-1 text-sm font-medium text-gray-700"
+          >Fecha Desde</label
+        >
         <input
           id="fechaDesde"
           type="date"
@@ -34,7 +38,9 @@
         />
       </div>
       <div class="flex flex-col">
-        <label for="fechaHasta" class="mb-1 text-sm font-medium text-gray-700">Fecha Hasta</label>
+        <label for="fechaHasta" class="mb-1 text-sm font-medium text-gray-700"
+          >Fecha Hasta</label
+        >
         <input
           id="fechaHasta"
           type="date"
@@ -45,9 +51,10 @@
       </div>
     </div>
 
-    <!-- Filtro por Estado (solo si se selecciona el tipo de filtro Estado) -->
     <div *ngIf="filtros.tipoFiltro === 'Estado'" class="flex flex-col mb-4">
-      <label for="estado" class="mb-1 text-sm font-medium text-gray-700">Estado</label>
+      <label for="estado" class="mb-1 text-sm font-medium text-gray-700"
+        >Estado</label
+      >
       <select
         id="estado"
         [(ngModel)]="filtros.estado"
@@ -55,30 +62,86 @@
         class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
       >
         <option value="">Seleccionar Estado</option>
-        <option *ngFor="let estado of estados" [value]="estado">{{ estado }}</option>
+        <option *ngFor="let estado of estados" [value]="estado">
+          {{ estado }}
+        </option>
       </select>
     </div>
 
-    <!-- Botón de Búsqueda -->
-    <div class="flex justify-end">
+    <div *ngIf="filtros.tipoFiltro === 'Cliente'" class="flex flex-col mb-4">
+      <label for="cliente" class="mb-1 text-sm font-medium text-gray-700"
+        >Cliente</label
+      >
+      <input
+        id="cliente"
+        type="text"
+        [(ngModel)]="filtros.cliente"
+        name="cliente"
+        class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+      />
+    </div>
+
+    <div *ngIf="filtros.tipoFiltro === 'Total'" class="flex space-x-4 mb-4">
+      <div class="flex flex-col">
+        <label for="totalDesde" class="mb-1 text-sm font-medium text-gray-700"
+          >Total Desde</label
+        >
+        <input
+          id="totalDesde"
+          type="number"
+          [(ngModel)]="filtros.totalDesde"
+          name="totalDesde"
+          class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+        />
+      </div>
+      <div class="flex flex-col">
+        <label for="totalHasta" class="mb-1 text-sm font-medium text-gray-700"
+          >Total Hasta</label
+        >
+        <input
+          id="totalHasta"
+          type="number"
+          [(ngModel)]="filtros.totalHasta"
+          name="totalHasta"
+          class="border border-gray-300 rounded px-4 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"
+        />
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end space-x-4">
       <button
         type="submit"
         class="bg-blue-500 text-white font-bold py-2 px-6 rounded hover:bg-blue-600 transition duration-300"
       >
         Buscar
       </button>
+      <button
+        type="button"
+        (click)="verTodasLasVentas()"
+        class="bg-gray-500 text-white font-bold py-2 px-6 rounded hover:bg-gray-600 transition duration-300"
+      >
+        Ver Todas
+      </button>
     </div>
   </form>
 
   <!-- Tabla de Resultados de Ventas -->
-  <div *ngIf="ventas.length > 0" class="bg-white p-4 rounded shadow overflow-x-auto">
-    <table class="w-full border-collapse border border-gray-300 text-sm text-gray-700">
+  <div
+    *ngIf="ventas.length > 0"
+    class="bg-white p-4 rounded shadow overflow-x-auto"
+  >
+    <table
+      class="w-full border-collapse border border-gray-300 text-sm text-gray-700"
+    >
       <thead class="bg-gray-100">
         <tr>
           <th class="border px-4 py-2 text-left font-medium">Cliente</th>
           <th class="border px-4 py-2 text-left font-medium">Fecha</th>
           <th class="border px-4 py-2 text-left font-medium">Estado</th>
+          <th class="border px-4 py-2 text-left font-medium">Productos</th>
           <th class="border px-4 py-2 text-left font-medium">Total</th>
+          <th class="border px-4 py-2 text-left font-medium">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -86,14 +149,58 @@
           <td class="border px-4 py-2">{{ venta.cliente }}</td>
           <td class="border px-4 py-2">{{ venta.fecha }}</td>
           <td class="border px-4 py-2">{{ venta.estado }}</td>
+          <td class="border px-4 py-2">
+            <button
+              (click)="abrirModalProductos(venta.productos)"
+              class="text-blue-500 hover:underline"
+            >
+              Ver Productos
+            </button>
+          </td>
           <td class="border px-4 py-2">{{ venta.total | currency }}</td>
+          <td class="border px-4 py-2">
+            <button
+              (click)="exportarVenta(venta)"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Exportar
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Mensaje sin ventas -->
-  <div *ngIf="ventas.length === 0" class="bg-white p-6 text-center text-gray-600 rounded shadow">
-    No hay ventas que coincidan con los filtros especificados.
+  <!-- Modal de Productos -->
+  <div
+    *ngIf="modalVisibleProductos"
+    class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center"
+  >
+    <div class="bg-white p-6 rounded shadow max-w-lg w-full">
+      <h2 class="text-xl font-bold mb-4">Productos de la Venta</h2>
+      <ul>
+        <li *ngFor="let producto of productosModal" class="mb-2">
+          {{ producto }}
+        </li>
+      </ul>
+      <button
+        (click)="cerrarModalProductos()"
+        class="bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-600"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div *ngIf="modalVisibleMensaje" class="modal-overlay">
+    <div class="modal-content">
+      <p>{{ modalMessage }}</p>
+      <button
+        (click)="cerrarModalMensaje()"
+        class="bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-600"
+      >
+        Cerrar
+      </button>
+    </div>
   </div>
 </div>

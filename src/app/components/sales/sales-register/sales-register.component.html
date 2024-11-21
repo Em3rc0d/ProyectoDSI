@@ -52,7 +52,7 @@
         aria-required="true"
       >
         <option *ngFor="let producto of productos" [value]="producto._id">
-          {{ producto.nombre }} - {{ producto.precio_unitario | currency }}
+          {{ producto.nombre }} - {{ producto.precio_unitario | currency }} - Stock: {{ cargarStock(producto._id) }}
         </option>
       </select>
     </div>
@@ -92,6 +92,7 @@
           <tr>
             <th class="px-4 py-2 text-left text-gray-700">Producto</th>
             <th class="px-4 py-2 text-left text-gray-700">Cantidad</th>
+            <th class="px-4 py-2 text-left text-gray-700">Stock</th>
             <th class="px-4 py-2 text-left text-gray-700">Precio Unitario</th>
             <th class="px-4 py-2 text-left text-gray-700">Subtotal</th>
             <th class="px-4 py-2 text-left text-gray-700">Acción</th>
@@ -101,6 +102,7 @@
           <tr *ngFor="let item of venta.productos; let i = index">
             <td class="px-4 py-2">{{ item.nombre }}</td>
             <td class="px-4 py-2">{{ item.cantidad }}</td>
+            <td class="px-4 py-2">{{ cargarStock(item.productoId) }}</td>
             <td class="px-4 py-2">{{ item.precio_unitario | currency }}</td>
             <td class="px-4 py-2">{{ item.subtotal | currency }}</td>
             <td class="px-4 py-2">

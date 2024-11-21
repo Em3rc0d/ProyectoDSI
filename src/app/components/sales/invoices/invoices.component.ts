@@ -4,6 +4,7 @@ import { InvoiceService } from '../../../services/invoice.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { ProductService } from '../../../services/product.service';
 
 interface Producto {
   productoId: string;
@@ -21,6 +22,15 @@ interface Producto {
   styleUrls: ['./invoices.component.css'],
 })
 export class InvoicesComponent implements OnInit {
+  producto = {
+    _id: '',
+    nombre: '',
+    precio_unitario: 0,
+    cantidad_stock: 0,
+    categoria: '',
+    proveedor: '',
+  };
+
   venta: any = {
     ventaId: '',
     cliente: '',
@@ -47,7 +57,8 @@ export class InvoicesComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private facturaService: InvoiceService
+    private facturaService: InvoiceService,
+    private productService: ProductService
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +74,7 @@ export class InvoicesComponent implements OnInit {
       this.venta.total = params['total'] || 0;
 
       // Rellenar la factura con los datos de la venta
-      this.factura.ventaId = this.venta.ventaId
+      this.factura.ventaId = this.venta.ventaId;
       this.factura.cliente = this.venta.cliente;
       this.factura.direccion = this.venta.direccion;
       this.factura.fecha = this.venta.fecha;
@@ -71,7 +82,43 @@ export class InvoicesComponent implements OnInit {
       this.factura.telefono = this.venta.telefono;
       this.factura.productos = this.venta.productos;
       this.factura.total = this.venta.total;
+
+      console.log(this.factura.ventaId)
     });
+  }
+
+  // Método para cargar el producto por su ID y asignar el stock correspondiente
+  cargarProductos(productoId: string): void {
+    this.productService.obtenerProductoPorId(productoId).subscribe({
+      next: (data) => {
+        const productoEncontrado = this.factura.productos.find(
+          (p: { productoId: string }) => p.productoId === productoId
+        );
+        if (productoEncontrado) {
+          productoEncontrado.cantidad_stock = data.cantidad_stock;
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar el producto:', error);
+      },
+    });
+  }
+
+  // Método para verificar el stock de un producto
+  cargarStock(productoId: string): string {
+    const producto = this.factura.productos.find(
+      (p: { productoId: string }) => p.productoId === productoId
+    );
+
+    if (producto) {
+      if (producto.cantidad_stock !== undefined) {
+        return producto.cantidad_stock.toString();
+      } else {
+        this.cargarProductos(productoId); // Cargar el stock si no está disponible
+        return 'Cargando...';
+      }
+    }
+    return 'No disponible';
   }
 
   // Método para registrar la factura
@@ -82,22 +129,32 @@ export class InvoicesComponent implements OnInit {
       fecha: new Date(),
     };
   
+    // Asegúrate de que los campos requeridos estén presentes
+    if (!facturaData.ventaId || !facturaData.cliente || !facturaData.direccion || !facturaData.ruc || !facturaData.telefono) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Faltan datos requeridos.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    }
+  
     console.log(facturaData); // Verifica si los datos están correctos
   
     this.facturaService.createFactura(facturaData).subscribe(
       (res) => {
-        // Mostrar modal de éxito con SweetAlert
         Swal.fire({
           title: '¡Factura registrada con éxito!',
           text: `Número de factura: ${facturaData.numero}`,
           icon: 'success',
           confirmButtonText: 'Aceptar',
         }).then(() => {
-          this.router.navigate(['/home/sales']); // Redirige después de confirmar
+          this.router.navigate(['/home/sales']);
         });
       },
       (err) => {
-        // Mostrar modal de error con SweetAlert
+        console.error('Error en la creación de factura:', err);
         Swal.fire({
           title: 'Error al registrar la factura',
           text: 'Hubo un problema al registrar la factura. Inténtalo nuevamente.',
@@ -109,11 +166,9 @@ export class InvoicesComponent implements OnInit {
   }
   
 
+  // Generar un número único para la factura
   generarNumeroFactura(): string {
-    // Generar un número de factura único, por ejemplo, usando la fecha actual y un contador
-    return `FAC-${new Date().getFullYear()}-${Math.floor(
-      Math.random() * 10000
-    )}`;
+    return `FAC-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}`;
   }
 
   // Método para cancelar y regresar a la lista de ventas

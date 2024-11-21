@@ -1,20 +1,18 @@
 import { Routes } from '@angular/router';
-import { InvoiceSearchComponent } from './components/sales/invoices/invoice-search/invoice-search.component';
-import { LowInventoryReportComponent } from './components/useless/low-inventory-report/low-inventory-report.component';
-import { SalesManagementComponent } from './components/useless/sales-management/sales-management.component';
-// import { SalesHistoryComponent } from './components/sales-history/sales-history.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
-import { SalesComponent } from './components/sales/sales.component';
-import { SalesRegisterComponent } from './components/sales/sales-register/sales-register.component';
-import { SalesSearchComponent } from './components/sales/sales-search/sales-search.component';
-import { ProductsComponent } from './components/products/products.component';
-import { ProductRegisterComponent } from './components/products/products-register/products-register.component';
-import { ProductsSearchComponent } from './components/products/products-search/products-search.component';
 import { RegisterComponent } from './components/welcome/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { StartComponent } from './components/home/start/start.component';
-import { InvoicesComponent } from './components/sales/invoices/invoices.component';
+import { SalesComponent } from './components/sales/sales.component';
+import { SalesRegisterComponent } from './components/sales/sales-register/sales-register.component';
+import { SalesSearchComponent } from './components/sales/sales-search/sales-search.component';
 import { SalesEditComponent } from './components/sales/sales-edit/sales-edit.component';
+import { ProductsComponent } from './components/products/products.component';
+import { ProductsRegisterComponent } from './components/products/products-register/products-register.component';
+import { ProductsSearchComponent } from './components/products/products-search/products-search.component';
+import { InvoicesComponent } from './components/sales/invoices/invoices.component';
+import { InvoiceSearchComponent } from './components/sales/invoices/invoice-search/invoice-search.component';
+import { AuthGuard } from './services/auth.guard';
 
 export const routes: Routes = [
   {
@@ -33,6 +31,7 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    canActivate: [AuthGuard], // Protege esta ruta
     children: [
       {
         path: '',
@@ -48,7 +47,7 @@ export const routes: Routes = [
       },
       {
         path: 'sales-edit/:id',
-        component: SalesEditComponent
+        component: SalesEditComponent,
       },
       {
         path: 'sales-register',
@@ -64,7 +63,7 @@ export const routes: Routes = [
       },
       {
         path: 'products-register',
-        component: ProductRegisterComponent,
+        component: ProductsRegisterComponent,
       },
       {
         path: 'products-search',
@@ -72,12 +71,12 @@ export const routes: Routes = [
       },
       {
         path: 'invoices',
-        component: InvoicesComponent
+        component: InvoicesComponent,
       },
       {
         path: 'invoices-search',
-        component: InvoiceSearchComponent
-      }
+        component: InvoiceSearchComponent,
+      },
     ],
   },
 ];

@@ -1,8 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { SaleService } from '../../../services/sale.service';
-import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+interface Venta {
+  cliente: string;
+  fecha: string;
+  estado: string;
+  productos: string[];
+  total: number;
+}
+
+interface Producto {
+  cantidad: number;
+  precio_unitario: number;
+  productoId: {
+    _id: string;
+    nombre: string;
+    precio_unitario: number;
+  };
+  subtotal: number;
+  _id: string;
+}
 
 @Component({
   selector: 'app-sales-search',
@@ -14,52 +34,119 @@ import { FormsModule } from '@angular/forms';
 export class SalesSearchComponent implements OnInit {
   ventas: any[] = [];
   filtros = {
-    tipoFiltro: '',   // Tipo de filtro seleccionado
+    tipoFiltro: '',
     fechaDesde: '',
     fechaHasta: '',
     estado: '',
+    cliente: '',
+    totalDesde: null,
+    totalHasta: null,
   };
 
-  estados = ['completada', 'pendiente']; // Los estados de las ventas
-  tiposFiltro = ['Fecha', 'Estado'];    // Tipos de filtros disponibles
+  estados = ['completada', 'pendiente'];
+  tiposFiltro = ['Fecha', 'Estado', 'Cliente', 'Total'];
+
+  // Variables para el modal
+  modalVisibleProductos: boolean = false;
+  modalVisibleMensaje: boolean = false;
+  modalMessage: string = '';
+  productosModal: string[] = [];
 
   constructor(private saleService: SaleService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.obtenerVentas();
+  }
 
-  // Esta función se llama cuando el tipo de filtro cambia
   onTipoFiltroChange(): void {
-    if (this.filtros.tipoFiltro === 'Fecha') {
-      this.filtros.estado = '';  // Limpiar estado cuando se selecciona filtro por fecha
-    } else if (this.filtros.tipoFiltro === 'Estado') {
-      this.filtros.fechaDesde = '';
-      this.filtros.fechaHasta = '';  // Limpiar fechas cuando se selecciona filtro por estado
+    switch (this.filtros.tipoFiltro) {
+      case 'Fecha':
+        this.filtros.estado = '';
+        break;
+      case 'Estado':
+        this.filtros.fechaDesde = '';
+        this.filtros.fechaHasta = '';
+        break;
+      case 'Cliente':
+        this.filtros.cliente = '';
+        break;
+      case 'Total':
+        this.filtros.totalDesde = null;
+        this.filtros.totalHasta = null;
+        break;
+      default:
+        break;
     }
   }
 
-  // Función para aplicar los filtros
   buscarVentas(): void {
-    // Verificar si se selecciona un filtro
-    if (this.filtros.tipoFiltro === '') {
-      // Si no hay filtro seleccionado, mostrar todas las ventas
-      this.saleService.obtenerVentas().subscribe({
-        next: (data) => {
-          this.ventas = data;
-        },
-        error: (error) => {
-          Swal.fire('Error', 'Hubo un problema al obtener las ventas.', 'error');
-        },
-      });
-    } else {
-      // Si hay un filtro seleccionado, aplicar el filtro correspondiente
-      this.saleService.buscarVentasFiltradas(this.filtros).subscribe({
-        next: (data) => {
-          this.ventas = data;
-        },
-        error: (error) => {
-          Swal.fire('Error', 'Hubo un problema al buscar las ventas.', 'error');
-        },
-      });
+    if (!this.filtros.tipoFiltro) {
+      // Mostrar el modal con un mensaje si no se seleccionó filtro
+      this.modalMessage = 'Por favor, ingresa un tipo de filtro para realizar la búsqueda.';
+      this.modalVisibleMensaje = true;
+      return; // Salir de la función si no hay filtro seleccionado
     }
+
+    this.saleService.buscarVentasFiltradas(this.filtros).subscribe(
+      (ventas) => {
+        this.ventas = ventas.length ? ventas : [];
+      },
+      (error) => console.error('Error al buscar ventas:', error)
+    );
+  }
+
+  verTodasLasVentas(): void {
+    this.filtros = {
+      tipoFiltro: '',
+      fechaDesde: '',
+      fechaHasta: '',
+      estado: '',
+      cliente: '',
+      totalDesde: null,
+      totalHasta: null,
+    };
+    this.obtenerVentas();
+  }
+
+  exportarVenta(venta: any): void {
+    const ventaConProductos = {
+      ...venta,
+      productos: venta.productos.map((producto: Producto) => `${producto.productoId.nombre} (Cantidad: ${producto.cantidad}, Precio Unitario: ${producto.precio_unitario})`).join(', ') 
+    };
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([ventaConProductos]);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Ventas');
+    XLSX.writeFile(wb, 'venta.xlsx');
+  }
+  
+
+  // Funciones para el modal
+abrirModalProductos(productos: any[]): void {
+  this.productosModal = productos.map((producto: Producto) => `${producto.productoId.nombre} (Cantidad: ${producto.cantidad}, Precio Unitario: ${producto.precio_unitario})`);
+  this.modalVisibleProductos = true;
+}
+
+
+  cerrarModalMensaje(): void {
+    this.modalVisibleMensaje = false;
+    this.modalMessage = '';
+  }
+
+  cerrarModalProductos(): void {
+    this.modalVisibleProductos = false;
+    this.productosModal = [];
+  }
+
+  obtenerVentas(): void {
+    this.saleService.obtenerVentas().subscribe(
+      (ventas) => {
+        this.ventas = ventas;
+      },
+      (error) => console.error('Error al obtener ventas:', error)
+    );
+  }
+
+  obtenerProductos(venta: any): string[] {
+    return venta.productos;
   }
 }

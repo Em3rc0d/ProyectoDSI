@@ -5,6 +5,25 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+interface Venta {
+  _id: string;
+  cliente: string;
+  estado: string;
+  fecha: string;
+  productos: {
+    cantidad: 0;
+    nombre: '';
+    precio_unitario: 0;
+    productoId: {
+      _id: '';
+      nombre: '';
+      precio_unitario: 0;
+      cantidad_stock: 0;
+      categoria: '';
+      proveedor: '';
+    };
+  };
+}
 @Component({
   selector: 'app-sales-edit',
   standalone: true,
@@ -19,6 +38,10 @@ export class SalesEditComponent implements OnInit {
   productoSeleccionado: { [key: string]: number } = {}; // Para almacenar los productos seleccionados con cantidades
   nuevaFecha: string | null = null;
   productosSeleccionadosResumen: any[] = []; // Para manejar el resumen de los productos seleccionados
+  private productosMap: Map<
+    string,
+    { nombre: string; precio_unitario: number }
+  > = new Map();
 
   constructor(
     private route: ActivatedRoute,
@@ -33,12 +56,12 @@ export class SalesEditComponent implements OnInit {
       this.obtenerProductosDisponibles();
     }
   }
-
   obtenerVenta(id: string): void {
     this.saleService.obtenerVentaPorId(id).subscribe({
       next: (venta) => {
         this.venta = venta;
         this.nuevaFecha = venta.fecha;
+        console.log(this.venta);
       },
       error: (error) => {
         console.error('Error al obtener la venta', error);
@@ -90,6 +113,7 @@ export class SalesEditComponent implements OnInit {
     this.productosSeleccionadosResumen = Object.keys(this.productoSeleccionado)
       .filter((productId) => this.productoSeleccionado[productId] > 0)
       .map((productId) => ({
+        nombre: this.getProductName(productId),
         productoId: productId,
         cantidad: this.productoSeleccionado[productId],
         precio_unitario: this.getProductPrice(productId),
@@ -132,33 +156,34 @@ export class SalesEditComponent implements OnInit {
   // Método para calcular el total actualizado
   calcularTotal(): number {
     let total = 0;
-
-    // Subtotal de los productos actuales
-    this.venta.productos.forEach(
-      (producto: { productoId: string; cantidad: number }) => {
-        total += this.calcularSubtotal(producto.productoId, producto.cantidad);
-      }
-    );
-
+  
+    // Subtotal de los productos actuales en la venta
+    this.venta.productos.forEach((producto: { productoId: any; cantidad: number }) => {
+      const productId = producto.productoId._id; // Asegurarse de que es un ObjectId
+      total += this.calcularSubtotal(productId, producto.cantidad);
+    });
+  
     // Subtotal de los productos seleccionados (carrito)
     this.productosSeleccionadosResumen.forEach((producto) => {
       total += producto.precio_unitario * producto.cantidad;
     });
-
+  
     return total;
   }
-
-  // Guardar los cambios de la venta
-  // Guardar los cambios de la venta
+  
+  // Método para guardar los cambios de la venta
   guardarVenta(): void {
     // Recalcular el total actualizado antes de guardar
     this.totalVenta = this.calcularTotal(); // Asegúrate de que el total siempre esté actualizado
-
+  
     // Filtrar los productos seleccionados que tienen una cantidad mayor a 0
     const productosSeleccionadosDetails = Object.keys(this.productoSeleccionado)
       .filter((productId) => this.productoSeleccionado[productId] > 0)
       .map((productId) => ({
-        productoId: productId,
+  
+        // Aquí, agregamos el nombre del producto al objeto
+        nombre: this.getProductName(productId),  
+        productoId: productId,  // El productoId es el ObjectId del producto
         cantidad: this.productoSeleccionado[productId],
         precio_unitario: this.getProductPrice(productId),
         subtotal: this.calcularSubtotal(
@@ -166,7 +191,7 @@ export class SalesEditComponent implements OnInit {
           this.productoSeleccionado[productId]
         ),
       }));
-
+  
     // Eliminar productos duplicados (los que ya están en la venta)
     // El filtro garantiza que no se repitan productos entre los que ya existen en la venta y los nuevos productos seleccionados
     const productosUnicos = [
@@ -178,7 +203,7 @@ export class SalesEditComponent implements OnInit {
       ),
       ...productosSeleccionadosDetails,
     ];
-
+  
     // Crear el objeto de venta con productos actualizados
     const ventaActualizada = {
       ...this.venta,
@@ -186,7 +211,7 @@ export class SalesEditComponent implements OnInit {
       fecha: this.nuevaFecha || this.venta.fecha, // Mantener la fecha existente o usar la nueva fecha
       productos: productosUnicos, // Actualizar con productos únicos (sin duplicados)
     };
-
+  
     // Confirmación de los cambios antes de enviar
     Swal.fire({
       title: 'Confirmación de cambios',
@@ -215,6 +240,7 @@ export class SalesEditComponent implements OnInit {
       }
     });
   }
+  
 
   cancelarEdicion(): void {
     this.router.navigate(['/home/sales']);

@@ -59,6 +59,11 @@ export class SalesRegisterComponent implements OnInit {
     this.venta.fecha = `${fecha}T${hora}`;
   }
 
+  cargarStock(productoId: string): string {
+    const producto = this.productos.find((p) => p._id === productoId);
+    return producto ? producto.cantidad_stock.toString() : '0';
+  }
+
   // Cargar los productos desde el servicio
   cargarProductos(): void {
     this.productService.obtenerProductos().subscribe({
@@ -72,30 +77,58 @@ export class SalesRegisterComponent implements OnInit {
   }
 
   // Añadir un producto al carrito
+  // Añadir un producto al carrito
   agregarProducto(productoId: string, cantidad: number): void {
+    // Obtener el stock disponible del producto
+    const producto = this.productos.find((p) => p._id === productoId);
+
+    if (!producto) {
+      console.error('Producto no encontrado');
+      return;
+    }
+
+    const stockDisponible = producto.cantidad_stock;
+
+    // Verificar si la cantidad solicitada excede el stock disponible
+    if (cantidad > stockDisponible) {
+      Swal.fire({
+        title: 'Error',
+        text: `No puedes agregar más de ${stockDisponible} unidades de este producto al carrito.`,
+        icon: 'error',
+      });
+      return;
+    }
+
     // Buscar el producto en el carrito
     const productoEnCarrito = this.venta.productos.find(
       (p) => p.productoId === productoId
     );
 
+    // Verificar si la cantidad total (ya en el carrito + la nueva) excede el stock
     if (productoEnCarrito) {
-      // Si el producto ya está en el carrito, incrementar la cantidad y actualizar el subtotal
-      productoEnCarrito.cantidad += cantidad; // Aumentar la cantidad del producto existente
+      const cantidadTotal = productoEnCarrito.cantidad + cantidad;
+      if (cantidadTotal > stockDisponible) {
+        Swal.fire({
+          title: 'Error',
+          text: `No puedes agregar más de ${stockDisponible} unidades de este producto al carrito.`,
+          icon: 'error',
+        });
+        return;
+      }
+      // Si la cantidad total no excede el stock, incrementar la cantidad y actualizar el subtotal
+      productoEnCarrito.cantidad += cantidad;
       productoEnCarrito.subtotal =
-        productoEnCarrito.precio_unitario * productoEnCarrito.cantidad; // Recalcular el subtotal
+        productoEnCarrito.precio_unitario * productoEnCarrito.cantidad;
     } else {
       // Si el producto no está en el carrito, agregarlo
-      const producto = this.productos.find((p) => p._id === productoId);
-      if (producto) {
-        const item: Producto = {
-          productoId: producto._id,
-          nombre: producto.nombre,
-          precio_unitario: producto.precio_unitario,
-          cantidad,
-          subtotal: producto.precio_unitario * cantidad,
-        };
-        this.venta.productos.push(item); // Agregar el producto al carrito
-      }
+      const item: Producto = {
+        productoId: producto._id,
+        nombre: producto.nombre,
+        precio_unitario: producto.precio_unitario,
+        cantidad,
+        subtotal: producto.precio_unitario * cantidad,
+      };
+      this.venta.productos.push(item); // Agregar el producto al carrito
     }
 
     // Actualizar el total de la venta
@@ -123,6 +156,8 @@ export class SalesRegisterComponent implements OnInit {
   registrarVenta() {
     this.saleService.crearVenta(this.venta).subscribe({
       next: (data) => {
+        console.log("Registro de venta exitoso:", data);
+        console.log("Id Venta:", data.venta._id);
         // Mostrar alerta de éxito
         Swal.fire({
           title: '¡Éxito!',
@@ -141,7 +176,8 @@ export class SalesRegisterComponent implements OnInit {
             }).then((res) => {
               if (res.isConfirmed) {
                 // Si elige Sí, navegar a la página de facturas con la información necesaria
-                this.generarFactura(data._id); // Pasa la ventaId y otra información
+                console.log('Generando factura para ventaId:', data.venta._id);
+                this.generarFactura(data.venta._id); // Pasa la ventaId y otra información
               } else {
                 // Si elige No, redirigir a la página de ventas
                 this.router.navigate(['/home/sales']);
@@ -174,8 +210,8 @@ export class SalesRegisterComponent implements OnInit {
   }
 
   // Método para generar la factura y navegar a la página de facturación
-  // Método para generar la factura y navegar a la página de facturación
   generarFactura(ventaId: string): void {
+    console.log('Generando factura para ventaId:', ventaId);
     const productos = this.venta.productos;
     const cliente = this.venta.cliente;
     const fecha = this.venta.fecha;

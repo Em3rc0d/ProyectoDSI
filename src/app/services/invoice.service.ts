@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from './environment';
 import { catchError } from 'rxjs/operators';
@@ -10,23 +10,32 @@ import { throwError } from 'rxjs';
 })
 export class InvoiceService {
   private apiUrl = environment.apiUrl + 'api/facturas';
+  private headers = this.getHeaders();
 
   constructor(private http: HttpClient) {}
 
+  // Método para obtener los encabezados con el token
+  private getHeaders(): HttpHeaders {
+    const token = sessionStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}` // Agregar el token en los encabezados
+    });
+  }
+  
   getFacturas(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl).pipe(
+    return this.http.get<any[]>(this.apiUrl, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );
   }
 
   getFacturaById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );
   }
 
   createFactura(factura: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, factura).pipe(
+    return this.http.post<any>(this.apiUrl, factura, { headers: this.headers }).pipe(
       catchError((error) => {
         console.error('Error en la creación de factura:', error);
         return throwError(error); // O devolver un Observable vacío
@@ -35,13 +44,13 @@ export class InvoiceService {
   }
 
   updateFactura(id: string, factura: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, factura).pipe(
+    return this.http.put<any>(`${this.apiUrl}/${id}`, factura, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );
   }
 
   deleteFactura(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );
   }
@@ -75,7 +84,7 @@ export class InvoiceService {
       params = params.set('estado', estado);
     }
 
-    return this.http.get(this.apiUrl, { params });
+    return this.http.get(this.apiUrl, { params, headers: this.headers });
   }
 
   private handleError(error: any) {

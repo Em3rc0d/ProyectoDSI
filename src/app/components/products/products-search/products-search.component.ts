@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { ProductService } from '../../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { ProductService } from '../../../services/product.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-products-search',
@@ -17,8 +18,14 @@ export class ProductsSearchComponent implements OnInit {
   productos: any[] = [];
   productosFiltrados: any[] = [];
   criterioBusqueda: string = '';
+  categoriaSeleccionada: string = '';
+  proveedorSeleccionado: string = '';
+  categorias: string[] = [];
+  proveedores: string[] = [];
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.cargarProductos();
@@ -28,7 +35,9 @@ export class ProductsSearchComponent implements OnInit {
     this.productService.obtenerProductos().subscribe({
       next: (data) => {
         this.productos = data;
-        this.productosFiltrados = data; // Mostrar todos inicialmente
+        this.productosFiltrados = data;
+        this.categorias = [...new Set(data.map((p) => p.categoria))];  // Extrae categorías únicas
+        this.proveedores = [...new Set(data.map((p) => p.proveedor))];  // Extrae proveedores únicos
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
@@ -38,24 +47,33 @@ export class ProductsSearchComponent implements OnInit {
 
   buscarProductos(): void {
     const criterio = this.criterioBusqueda.toLowerCase();
-    this.productosFiltrados = this.productos.filter(
-      (producto) =>
-        producto.nombre.toLowerCase().includes(criterio) ||
-        producto.categoria.nombre.toLowerCase().includes(criterio) ||
-        producto.proveedor.nombre.toLowerCase().includes(criterio)
-    );
+    this.productosFiltrados = this.productos.filter((producto) => {
+      const matchNombre = producto.nombre.toLowerCase().includes(criterio);
+      const matchCategoria = this.categoriaSeleccionada
+        ? producto.categoria.toLowerCase() === this.categoriaSeleccionada.toLowerCase()
+        : true;
+      const matchProveedor = this.proveedorSeleccionado
+        ? producto.proveedor.toLowerCase() === this.proveedorSeleccionado.toLowerCase()
+        : true;
+
+      return (
+        (matchNombre || producto.categoria.toLowerCase().includes(criterio) || producto.proveedor.toLowerCase().includes(criterio)) &&
+        matchCategoria &&
+        matchProveedor
+      );
+    });
   }
 
   exportarResultados(): void {
+    // Exportar a Excel
     const data = this.productosFiltrados.map((producto) => ({
       Nombre: producto.nombre,
-      Precio: producto.precio,
-      Categoría: producto.categoria.nombre,
-      Proveedor: producto.proveedor.nombre,
+      Precio: producto.precio_unitario,
+      Categoría: producto.categoria,
+      Proveedor: producto.proveedor,
       Cantidad: producto.cantidad,
     }));
 
-    // Formato por defecto: CSV
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Productos');
@@ -69,11 +87,19 @@ export class ProductsSearchComponent implements OnInit {
       body: this.productosFiltrados.map((producto) => [
         producto.nombre,
         producto.precio,
-        producto.categoria.nombre,
-        producto.proveedor.nombre,
+        producto.categoria,
+        producto.proveedor,
         producto.cantidad,
       ]),
     });
     doc.save('productos.pdf');
+  }
+
+  cancelar(): void {
+    this.criterioBusqueda = '';
+    this.categoriaSeleccionada = '';
+    this.proveedorSeleccionado = '';
+    this.productosFiltrados = this.productos;
+    this.router.navigate(['/home/products']);
   }
 }

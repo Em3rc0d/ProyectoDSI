@@ -87,6 +87,7 @@
             <tr>
               <th class="px-4 py-2 text-left text-gray-700">Producto</th>
               <th class="px-4 py-2 text-left text-gray-700">Cantidad</th>
+              <th class="px-4 py-2 text-left text-gray-700">Stock</th>
               <th class="px-4 py-2 text-left text-gray-700">Precio Unitario</th>
               <th class="px-4 py-2 text-left text-gray-700">Subtotal</th>
             </tr>
@@ -95,6 +96,7 @@
             <tr *ngFor="let item of factura.productos">
               <td class="px-4 py-2">{{ item.nombre }}</td>
               <td class="px-4 py-2">{{ item.cantidad }}</td>
+              <td class="px-4 py-2">{{ cargarStock(item.productoId) }}</td>
               <td class="px-4 py-2">{{ item.precio_unitario | currency }}</td>
               <td class="px-4 py-2">{{ item.subtotal | currency }}</td>
             </tr>

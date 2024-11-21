@@ -1,10 +1,16 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  Router,
+} from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';  // Servicio de autenticación
+import { AuthService } from './auth.service'; // Servicio de autenticación
+import Swal from 'sweetalert2';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
@@ -20,8 +26,24 @@ export class RoleGuard implements CanActivate {
       return true;
     }
 
-    // Si no tiene el rol adecuado, redirige al login o a una página de acceso denegado
-    this.router.navigate(['/access-denied']);
+    Swal.fire({
+      title: 'Acceso restringido',
+      text: 'No tienes los permisos necesarios para ver esta página.',
+      icon: 'warning',
+      confirmButtonText: 'Volver a intentar',
+      showCancelButton: true,
+      cancelButtonText: 'Salir',
+    }).then(result => {
+      if (result.isConfirmed) {
+        // Si el usuario hace clic en 'Volver a intentar', redirige al login
+        this.router.navigate(['/login']);
+      } else {
+        // Si hace clic en 'Salir', redirige a la página de inicio
+        this.router.navigate(['/home']);
+      }
+    });
+    
+    
     return false;
   }
 }

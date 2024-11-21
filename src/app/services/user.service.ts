@@ -23,18 +23,10 @@ export class UserService {
     });
   }
   
-
-  // Obtener todos los usuarios
-  obtenerUsuarios(): Observable<any> {
-    return this.http.get<any>(this.apiUrl, { headers: this.getHeaders() }).pipe(
-      catchError(this.handleError)  // Manejo de errores
-    );
-  }
-
-  // Crear un nuevo usuario
-  crearUsuario(usuario: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, usuario, { headers: this.getHeaders() }).pipe(
-      catchError(this.handleError)  // Manejo de errores
+  obtenerUsuarioPorEmail(email: string): Observable<any> {
+    const url = `${this.apiUrl}/email/${email}`;
+    return this.http.get<any>(url, { headers: this.getHeaders() }).pipe(
+      catchError(this.handleError)
     );
   }
 

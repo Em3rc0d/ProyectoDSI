@@ -13,6 +13,7 @@ import { ProductsSearchComponent } from './components/products/products-search/p
 import { InvoicesComponent } from './components/sales/invoices/invoices.component';
 import { InvoiceSearchComponent } from './components/sales/invoices/invoice-search/invoice-search.component';
 import { AuthGuard } from './services/auth.guard';
+import { RoleGuard } from './services/role.guard'; // Importa el RoleGuard
 
 export const routes: Routes = [
   {
@@ -27,6 +28,8 @@ export const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['admin']}
   },
   {
     path: 'home',
@@ -44,38 +47,56 @@ export const routes: Routes = [
       {
         path: 'sales',
         component: SalesComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin', 'vendedor'] }  // Los roles permitidos
       },
       {
         path: 'sales-edit/:id',
         component: SalesEditComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin'] }  // Los roles permitidos
       },
       {
         path: 'sales-register',
         component: SalesRegisterComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin', 'vendedor'] }  // Los roles permitidos
       },
       {
         path: 'sales-search',
         component: SalesSearchComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin', 'vendedor'] }  // Los roles permitidos
       },
       {
         path: 'products',
         component: ProductsComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin', 'vendedor'] }  // Los roles permitidos
       },
       {
         path: 'products-register',
         component: ProductsRegisterComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin'] }  // Solo admin puede registrar productos
       },
       {
         path: 'products-search',
         component: ProductsSearchComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin', 'vendedor'] }  // Los roles permitidos
       },
       {
         path: 'invoices',
         component: InvoicesComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin', 'vendedor'] }  // Los roles permitidos
       },
       {
         path: 'invoices-search',
         component: InvoiceSearchComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin', 'vendedor'] }  // Los roles permitidos
       },
     ],
   },

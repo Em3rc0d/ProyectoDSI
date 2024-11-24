@@ -1,27 +1,82 @@
 # ProyectoDSI
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11.
+Este es un proyecto desarrollado con [Angular CLI](https://github.com/angular/angular-cli) version 18.2.11 y TailwindCSS que implementa un sistema de gestión enfocado en productos, ventas y facturación.
 
-## Development server
+## Demo en Producción
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+El proyecto está hosteado en Vercel y puede ser accedido en el siguiente enlace:  
+[Proyecto DSI](https://proyecto-dsi.vercel.app/login)
 
-## Code scaffolding
+## Estructura del Proyecto
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+El proyecto sigue una arquitectura modular organizada en diferentes componentes y servicios:
 
-## Build
+- **Components**: `home`, `products`, `sales`, `welcome`, entre otros.
+- **Servicios**: Contiene la lógica de negocio para la interacción con la API.
+- **Estilos**: Utiliza TailwindCSS para un diseño responsive y moderno.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Características
 
-## Running unit tests
+1. **Gestión de productos**:
+   - Registro de productos.
+   - Búsqueda de productos.
+   - Modificación de productos.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+2. **Gestión de ventas**:
+   - Registro y edición de ventas.
+   - Búsqueda avanzada.
 
-## Running end-to-end tests
+3. **Facturación**:
+   - Generación y visualización de facturas.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+4. **Navegación**:
+   - Componente de `navbar` para la navegación entre las secciones.
+   - Página de inicio (`home`) que da la bienvenida a los usuarios.
 
-## Further help
+## Requisitos Previos
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Node.js v16+ y npm instalado.
+- Angular CLI v15+.
+- TailwindCSS configurado.
+
+## Instalación
+
+1. Clona este repositorio:
+   ```bash
+   git clone https://github.com/Em3rc0d/ProyectoDSI.git
+   cd ProyectoDSI
+   ```
+
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+
+3. Configura los entornos:
+   - Actualiza los archivos en la carpeta `environments` según tu configuración.
+
+4. Inicia el servidor de desarrollo:
+   ```bash
+   ng serve
+   ```
+
+## Uso
+
+- Accede a la aplicación en: `http://localhost:4200` para desarrollo.
+- Navega a través del menú para gestionar productos, ventas y facturas.
+
+## Tecnologías Utilizadas
+
+- **Frontend**: Angular
+- **Estilos**: TailwindCSS
+- **Hosting**: Vercel
+
+## Scripts Disponibles
+
+- `ng serve`: Ejecuta la aplicación en modo desarrollo.
+- `ng build`: Compila la aplicación para producción.
+- `ng test`: Ejecuta las pruebas unitarias.
+
+## Contribuciones
+
+Si deseas contribuir, crea un `pull request` con tus mejoras o reporta problemas en la sección de [Issues](https://github.com/Em3rc0d/ProyectoDSI/issues).

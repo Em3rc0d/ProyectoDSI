@@ -14,6 +14,7 @@ import { InvoicesComponent } from './components/sales/invoices/invoices.componen
 import { InvoiceSearchComponent } from './components/sales/invoices/invoice-search/invoice-search.component';
 import { AuthGuard } from './services/auth.guard';
 import { RoleGuard } from './services/role.guard'; // Importa el RoleGuard
+import { ProductsAddComponent } from './components/products/products-add/products-add.component';
 
 export const routes: Routes = [
   {
@@ -79,6 +80,12 @@ export const routes: Routes = [
         component: ProductsRegisterComponent,
         canActivate: [AuthGuard, RoleGuard],  // Protección por rol
         data: { roles: ['admin'] }  // Solo admin puede registrar productos
+      },
+      {
+        path: 'products-add-inventory',
+        component: ProductsAddComponent,
+        canActivate: [AuthGuard, RoleGuard],  // Protección por rol
+        data: { roles: ['admin'] }  // Los roles permitidos
       },
       {
         path: 'products-search',

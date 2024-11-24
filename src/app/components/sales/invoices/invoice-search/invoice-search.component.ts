@@ -2,14 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../../services/invoice.service';
+import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
 
 interface Producto {
   productoId: string;
-  nombre: string;
   precio_unitario: number;
   cantidad: number;
   subtotal: number;
 }
+
 
 interface Invoice {
   _id: string;
@@ -149,8 +151,8 @@ export class InvoiceSearchComponent implements OnInit {
   viewInvoice(id: string): void {
     this.invoiceService.getFacturaById(id).subscribe({
       next: (data) => {
-        this.selectedInvoice = data;
-        this.showModal = true;
+        this.selectedInvoice = data; // Asignar la factura seleccionada
+        this.showModal = true; // Cambiar el estado para mostrar el modal
       },
       error: (error) => {
         console.error('Error al cargar la factura:', error);
@@ -164,8 +166,57 @@ export class InvoiceSearchComponent implements OnInit {
     this.selectedInvoice = null;
   }
 
-  downloadInvoice(pdfUrl: string): void {
-    window.open(pdfUrl, '_blank');
+  // Función para descargar la factura como Excel
+  downloadInvoiceAsExcel(): void {
+    if (this.selectedInvoice) {
+      const invoiceDetails = this.selectedInvoice; // Los detalles de la factura
+
+      // Crear la hoja de trabajo con la información de la factura
+      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([
+        {
+          'Número de Factura': invoiceDetails.numero,
+          Fecha: invoiceDetails.fecha,
+          Cliente: invoiceDetails.cliente,
+          Total: invoiceDetails.total,
+          Dirección: invoiceDetails.direccion,
+          RUC: invoiceDetails.ruc,
+          Teléfono: invoiceDetails.telefono,
+          Estado: invoiceDetails.estado,
+        },
+      ]);
+      // Si tienes productos asociados a la factura, puedes agregar un detalle adicional
+      const productos = invoiceDetails.productos.map((producto) => {
+        return {
+          Producto: producto.productoId,
+          Cantidad: producto.cantidad,
+          Precio: producto.precio_unitario,
+          Total: producto.subtotal * producto.cantidad,
+        };
+      });
+      // Crear una hoja de trabajo para los productos
+      const wsProductos: XLSX.WorkSheet = XLSX.utils.json_to_sheet(productos);
+      // Crear el libro de trabajo con ambas hojas: una para los detalles y otra para los productos
+      const wb: XLSX.WorkBook = {
+        Sheets: { Factura: ws, Productos: wsProductos },
+        SheetNames: ['Factura', 'Productos'],
+      };
+
+      // Convertir el libro de trabajo en un buffer y descargarlo
+      const excelBuffer: any = XLSX.write(wb, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+      const excelFile = new Blob([excelBuffer], {
+        type: 'application/octet-stream',
+      });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(excelFile);
+      link.download = 'factura.xlsx';
+      link.click();
+    } else {
+      this.message = 'No se pudo generar el archivo Excel de la factura';
+      console.error('Factura no encontrada');
+    }
   }
 
   transform(value: string): string {

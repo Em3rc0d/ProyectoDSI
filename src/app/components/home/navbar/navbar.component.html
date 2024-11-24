@@ -1,6 +1,9 @@
 <nav class="bg-indigo-600 p-4 shadow-md">
   <div class="container mx-auto flex justify-between items-center">
-    <p class="text-white text-2xl font-semibold">Coral</p>
+    <p class="text-white text-2xl font-semibold flex items-center">
+      <i class="fas fa-cogs mr-2 text-white"></i> 
+      Gestión de Inventario
+    </p>
     
     <!-- Botón de menú para dispositivos móviles -->
     <button
@@ -8,7 +11,7 @@
       (click)="toggleMenu()"
       aria-label="Abrir menú"
     >
-      ☰
+      <i class="fas fa-bars text-white text-2xl"></i>
     </button>
     
     <!-- Menú de navegación -->
@@ -16,17 +19,25 @@
       class="space-x-4 md:flex md:space-x-6 md:static"
       [class.hidden]="!menuOpen"
     >
-      <a href="/home/start" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out">Inicio</a>
-      <a href="/home/sales" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out">Ventas</a>
-      <a href="/home/products" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out">Productos</a>
-      <a href="/home/invoices-search" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out">Facturas</a>
+      <a href="/home/start" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out flex items-center">
+        <i class="fas fa-home mr-2"></i> Inicio
+      </a>
+      <a href="/home/sales" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out flex items-center">
+        <i class="fas fa-chart-line mr-2"></i> Ventas
+      </a>
+      <a href="/home/products" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out flex items-center">
+        <i class="fas fa-box-open mr-2"></i> Productos
+      </a>
+      <a href="/home/invoices-search" class="text-white hover:text-indigo-200 transition duration-200 ease-in-out flex items-center">
+        <i class="fas fa-file-invoice mr-2"></i> Facturas
+      </a>
       
       <!-- Botón de cerrar sesión -->
       <button
         (click)="logOut()"
-        class="text-white hover:text-indigo-200 focus:outline-none transition duration-200 ease-in-out"
+        class="text-white hover:text-indigo-200 focus:outline-none transition duration-200 ease-in-out flex items-center"
       >
-        Cerrar Sesión
+        <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
       </button>
     </div>
   </div>

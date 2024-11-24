@@ -1,28 +1,58 @@
-<div class="min-h-screen bg-gray-50 p-4 md:p-6">
+<div class="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-6 md:p-8">
   <div class="max-w-7xl mx-auto">
     <!-- Encabezado del Dashboard -->
-    <div class="bg-white p-4 md:p-6 rounded-lg shadow-lg mb-4 md:mb-6">
-      <h1 class="text-2xl md:text-3xl font-semibold text-gray-800">Panel de Control</h1>
-      <p class="text-gray-600 mt-1 md:mt-2">Resumen de tu sistema de inventarios</p>
+    <div class="bg-white p-6 rounded-xl shadow-2xl mb-6 md:mb-8">
+      <h1 class="text-3xl md:text-4xl font-semibold text-gray-800 flex items-center justify-center">
+        <i class="fas fa-tachometer-alt text-indigo-600 mr-4 text-4xl"></i> 
+        Panel de Control
+      </h1>
+      <p class="text-gray-600 mt-2 text-center">Resumen de tu sistema de inventarios</p>
     </div>
 
     <!-- Gráficos y Estadísticas -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-      <div class="bg-blue-600 hover:bg-blue-700 text-white p-4 md:p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-        <h2 class="text-lg md:text-xl font-semibold">Productos Totales</h2>
-        <p class="text-3xl md:text-4xl font-bold mt-1 md:mt-2">{{ contadorProductos }}</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+      <!-- Productos Totales -->
+      <div class="bg-blue-600 hover:bg-blue-700 text-white p-6 rounded-xl shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <i class="fas fa-boxes text-4xl"></i>
+          <div>
+            <h2 class="text-xl font-semibold">Productos Totales</h2>
+            <p class="text-3xl font-bold mt-2">{{ contadorProductos }}</p>
+          </div>
+        </div>
       </div>
-      <div class="bg-green-600 hover:bg-green-700 text-white p-4 md:p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-        <h2 class="text-lg md:text-xl font-semibold">Categorías</h2>
-        <p class="text-3xl md:text-4xl font-bold mt-1 md:mt-2">{{ contadorCategorias }}</p>
+
+      <!-- Categorías -->
+      <div class="bg-green-600 hover:bg-green-700 text-white p-6 rounded-xl shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <i class="fas fa-tags text-4xl"></i>
+          <div>
+            <h2 class="text-xl font-semibold">Categorías</h2>
+            <p class="text-3xl font-bold mt-2">{{ contadorCategorias }}</p>
+          </div>
+        </div>
       </div>
-      <div class="bg-yellow-600 hover:bg-yellow-700 text-white p-4 md:p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-        <h2 class="text-lg md:text-xl font-semibold">Stock Bajo</h2>
-        <p class="text-3xl md:text-4xl font-bold mt-1 md:mt-2">{{ contadorBajoStock }}</p>
+
+      <!-- Stock Bajo -->
+      <div class="bg-yellow-600 hover:bg-yellow-700 text-white p-6 rounded-xl shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <i class="fas fa-exclamation-triangle text-4xl"></i>
+          <div>
+            <h2 class="text-xl font-semibold">Stock Bajo</h2>
+            <p class="text-3xl font-bold mt-2">{{ contadorBajoStock }}</p>
+          </div>
+        </div>
       </div>
-      <div class="bg-red-600 hover:bg-red-700 text-white p-4 md:p-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-        <h2 class="text-lg md:text-xl font-semibold">Ventas Hoy</h2>
-        <p class="text-3xl md:text-4xl font-bold mt-1 md:mt-2">{{ contadorVentas }}</p>
+
+      <!-- Ventas Hoy -->
+      <div class="bg-red-600 hover:bg-red-700 text-white p-6 rounded-xl shadow-xl transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <i class="fas fa-chart-line text-4xl"></i>
+          <div>
+            <h2 class="text-xl font-semibold">Ventas Hoy</h2>
+            <p class="text-3xl font-bold mt-2">{{ contadorVentas }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

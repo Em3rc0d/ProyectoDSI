@@ -7,8 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../services/product.service';
 
 interface Producto {
-  productoId: string;
   nombre: string;
+  productoId: string;
   precio_unitario: number;
   cantidad: number;
   subtotal: number;
@@ -76,7 +76,6 @@ export class SalesRegisterComponent implements OnInit {
     });
   }
 
-  // Añadir un producto al carrito
   // Añadir un producto al carrito
   agregarProducto(productoId: string, cantidad: number): void {
     // Obtener el stock disponible del producto
@@ -154,10 +153,9 @@ export class SalesRegisterComponent implements OnInit {
   // Registrar la venta
   // Registrar la venta y mostrar la confirmación para generar la factura
   registrarVenta() {
+    console.log(this.venta);
     this.saleService.crearVenta(this.venta).subscribe({
       next: (data) => {
-        console.log("Registro de venta exitoso:", data);
-        console.log("Id Venta:", data.venta._id);
         // Mostrar alerta de éxito
         Swal.fire({
           title: '¡Éxito!',
@@ -176,7 +174,6 @@ export class SalesRegisterComponent implements OnInit {
             }).then((res) => {
               if (res.isConfirmed) {
                 // Si elige Sí, navegar a la página de facturas con la información necesaria
-                console.log('Generando factura para ventaId:', data.venta._id);
                 this.generarFactura(data.venta._id); // Pasa la ventaId y otra información
               } else {
                 // Si elige No, redirigir a la página de ventas

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:3000/',
+  apiUrl: 'https://backend-project-dsi.vercel.app/',
 };
